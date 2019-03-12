@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LaserProjectile : Projectile
 {
-    private float m_timer = 0;
     private BounceTrajectory m_trajectory;
 
     [SerializeField]
@@ -13,15 +12,25 @@ public class LaserProjectile : Projectile
     [SerializeField]
     private LineRenderer m_lineRenderer;
 
-    public override void Init(Vector3 direction, ProjectileDestroyed onDestroy)
+    private bool m_markedForDestroy = false;
+
+    public override void Init(Vector3 direction, int layerMask)
     {
-        m_trajectory = new BounceTrajectory(10, clampTrajectory: true, endOnFloor:true);
+        m_trajectory = new BounceTrajectory(10, clampTrajectory: true);
         m_trajectory.CalculateTrajectory(transform.position, direction);
+
+        GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
+        if (cameraControllerObj != null) {
+            CameraController controller = cameraControllerObj.GetComponent<CameraController>();
+            if (controller != null)
+                m_trajectory.OnBounce += () => { controller.StartShake(0.4f, 5, 1, 0); };
+        }
+
         m_lineRenderer.positionCount = 2;
         Vector3 pos = m_trajectory.GetCurrentPosition();
         m_lineRenderer.SetPosition(0, pos);
         m_lineRenderer.SetPosition(1, pos);
-        base.Init(direction, onDestroy);
+        base.Init(direction, layerMask);
     }
 
     protected override void FixedUpdate()
@@ -31,6 +40,41 @@ public class LaserProjectile : Projectile
 
         base.FixedUpdate();
 
+        MoveAlongTrajectory();
+
+        if (!m_markedForDestroy)
+            CheckCollision();
+    }
+
+    protected override void CheckCollision()
+    {
+        Vector3 rayDirection = m_currentDirection * m_velocity * Time.deltaTime;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position - rayDirection, m_currentDirection, rayDirection.magnitude, m_layerMask);
+
+        if (hit.collider != null) {
+            IDamageable damageable = hit.collider.gameObject.GetComponent<IDamageable>();
+            if (damageable != null) {
+                damageable.TakeDamage(CalculateDamage());
+
+                GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
+                if (cameraControllerObj != null) {
+                    CameraController controller = cameraControllerObj.GetComponent<CameraController>();
+                    if (controller != null)
+                        controller.StartShake(0.4f, 5, 1, 0);
+                }
+
+                MarkForDestroy();
+            }
+        }
+    }
+
+    private float CalculateDamage()
+    {
+        return m_trajectory.GetCornersBetween(-1, m_trajectory.GetCurrentDistance(), includeEndPoints: false).Count;
+    }
+
+    private void MoveAlongTrajectory()
+    {
         float trajectoryProgress = m_trajectory.Continue(m_velocity * Time.deltaTime);
         transform.position = m_trajectory.GetCurrentPosition();
 
@@ -51,9 +95,14 @@ public class LaserProjectile : Projectile
 
         m_currentDirection = m_trajectory.GetCurrentDirection();
 
-        m_timer += Time.fixedDeltaTime;
+        if (m_trajectory.GetProgressFromDistance(tailDistance) >= 1) {
+            MarkForDestroy();
+        }
+    }
 
-        if (m_trajectory.GetProgressFromDistance(tailDistance) >= 1)
-            Destroy(gameObject);
+    private void MarkForDestroy()
+    {
+        m_markedForDestroy = true;
+        Destroy(gameObject);
     }
 }

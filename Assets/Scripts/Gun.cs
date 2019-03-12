@@ -24,32 +24,28 @@ public class Gun : MonoBehaviour
 
         Projectile projectile = Instantiate(m_projectilePrefab);
         projectile.transform.position = m_barrel.position;
-        projectile.Init(direction, OnProjectileDestroyed);
+        projectile.Init(direction,  ~(1 << m_owner.gameObject.layer));
+        projectile.OnDestroyed += OnProjectileDestroyed;
+
         m_animator.SetTrigger("Shoot");
+
+        GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
+        if (cameraControllerObj != null) {
+            CameraController controller = cameraControllerObj.GetComponent<CameraController>();
+            if (controller != null)
+                controller.StartShake(0.4f, 5, 1, 0);
+        }
+
         m_canShoot = false;
+    }
 
-        GameObject ccgo = GameObject.FindGameObjectWithTag("CameraController");
-        CameraController cc = null;
-
-        if (ccgo != null)
-            cc = ccgo.GetComponent<CameraController>();
-
-        if (cc != null)
-            cc.SetTarget(projectile.transform);
+    public void DrawTrajectory()
+    {
+        BounceTrajectory trajectory = new BounceTrajectory(2, clampTrajectory: true);
     }
 
     private void OnProjectileDestroyed(Projectile projectile)
     {
-        m_owner.position = projectile.GetPosition();
         m_canShoot = true;
-
-        GameObject ccgo = GameObject.FindGameObjectWithTag("CameraController");
-        CameraController cc = null;
-
-        if (ccgo != null)
-            cc = ccgo.GetComponent<CameraController>();
-
-        if (cc != null)
-            cc.SetTarget(m_owner);
     }
 }

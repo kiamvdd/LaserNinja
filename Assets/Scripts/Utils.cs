@@ -8,4 +8,6 @@ public static class Utils
     {
         return Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg;
     }
+
+    public delegate void EmptyDelegate();
 }

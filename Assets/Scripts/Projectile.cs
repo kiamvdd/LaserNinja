@@ -8,14 +8,16 @@ public abstract class Projectile : MonoBehaviour
     protected bool m_initialized = false;
     protected Vector3 m_currentDirection;
 
+    protected int m_layerMask = 0;
+
     [SerializeField]
     protected float m_velocity = 15;
     public delegate void ProjectileDestroyed(Projectile projectile);
 
-    private ProjectileDestroyed m_onDestroy;
-    public virtual void Init(Vector3 direction, ProjectileDestroyed onDestroy)
+    public event ProjectileDestroyed OnDestroyed;
+    public virtual void Init(Vector3 direction, int layerMask)
     {
-        m_onDestroy += onDestroy;
+        m_layerMask = layerMask;
         m_currentDirection = direction;
         m_initialized = true;
     }
@@ -29,6 +31,8 @@ public abstract class Projectile : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z);
     }
 
+    protected abstract void CheckCollision();
+
     public virtual Vector3 GetPosition()
     {
         return transform.position;
@@ -36,7 +40,7 @@ public abstract class Projectile : MonoBehaviour
 
     private void OnDestroy()
     {
-        m_onDestroy(this);
-        m_onDestroy = null;
+        OnDestroyed(this);
+        OnDestroyed = null;
     }
 }

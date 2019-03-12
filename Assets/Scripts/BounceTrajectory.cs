@@ -8,6 +8,9 @@ public class BounceTrajectory : Trajectory
     private List<float> m_distances = new List<float>();
     private float m_totalDistance = 0;
 
+    private float m_nextCornerDistance;
+    private int m_currentCorner = 0;
+
     private Vector3 m_currentPosition;
     private Vector3 m_currentDirection;
 
@@ -16,6 +19,9 @@ public class BounceTrajectory : Trajectory
 
     private int m_numBounces;
     private float m_distanceTraversed = 0;
+
+    public event Utils.EmptyDelegate OnBounce;
+
     public BounceTrajectory(int numBounces, bool clampTrajectory = false, bool endOnFloor = false)
     {
         m_clampTrajectory = clampTrajectory;
@@ -64,6 +70,8 @@ public class BounceTrajectory : Trajectory
             m_distances.Add(distance);
             currentBounce++;
         }
+
+        m_nextCornerDistance = m_distances.Count > 2 ? m_distances[1] : Mathf.Infinity;
     }
 
     /// <summary>
@@ -75,6 +83,11 @@ public class BounceTrajectory : Trajectory
     public override float Continue(float velocity)
     {
         m_distanceTraversed += velocity;
+        if (m_currentCorner < m_distances.Count - 2 && m_distanceTraversed > m_nextCornerDistance && m_distanceTraversed < m_totalDistance) {
+            m_currentCorner++;
+            m_nextCornerDistance += m_distances[m_currentCorner + 1];
+            OnBounce();
+        }
 
         GetTrajectoryAtDistance(m_distanceTraversed, out Vector3 position, out Vector3 direction);
 
@@ -140,7 +153,7 @@ public class BounceTrajectory : Trajectory
     /// <param name="d1"></param>
     /// <param name="d2"></param>
     /// <returns></returns>
-    public List<Vector3> GetCornersBetween(float d1, float d2)
+    public List<Vector3> GetCornersBetween(float d1, float d2, bool includeEndPoints = true)
     {
         List<Vector3> m_corners = new List<Vector3>();
         if ((d1 < 0 && d2 < 0) || (d1 > m_totalDistance && d2 > m_totalDistance) || d1 == d2)
@@ -152,13 +165,15 @@ public class BounceTrajectory : Trajectory
         float tempDist = 0;
 
         for (int i = 0; i < m_distances.Count; i++) {
-            if (tempDist > leftVal && tempDist < rightVal)
-                m_corners.Add(m_trajectoryPositions[i]);
+            if (tempDist > leftVal && tempDist < rightVal) {
+                if (!(i == 0 && !includeEndPoints))
+                    m_corners.Add(m_trajectoryPositions[i]);
+            }
 
             tempDist += m_distances[i];
         }
         
-        if (tempDist > leftVal && tempDist < rightVal)
+        if (includeEndPoints && tempDist > leftVal && tempDist < rightVal)
             m_corners.Add(m_trajectoryPositions[m_trajectoryPositions.Count - 1]);
 
         return m_corners;
@@ -177,5 +192,10 @@ public class BounceTrajectory : Trajectory
     public override float GetProgressFromDistance(float distance)
     {
         return distance / m_totalDistance;
+    }
+
+    private void OnDestroy()
+    {
+        OnBounce = null;
     }
 }

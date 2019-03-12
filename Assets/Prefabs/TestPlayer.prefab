@@ -248,12 +248,12 @@ GameObject:
   m_Component:
   - component: {fileID: 6484584840102127194}
   - component: {fileID: 6484584840102127189}
-  - component: {fileID: 6484584840102127188}
   - component: {fileID: 6484584840102127192}
   - component: {fileID: 6484584840102127193}
+  - component: {fileID: 6484584839595061203}
   m_Layer: 8
   m_Name: TestPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -288,29 +288,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70258ef3fb4d7a24b9b0cdf003cb3611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementController: {fileID: 6484584840102127188}
+  m_characterBody: {fileID: 6484584839595061203}
   m_viewController: {fileID: 1058760632362744172}
+  m_jumpForce: 10
   m_gun: {fileID: 202198266}
---- !u!114 &6484584840102127188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6484584840102127198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00dcfa468c0c4784ba0517e632c7efc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_floorRayCastDistance: 0.2
-  m_jumpVelocity: 15
-  m_body: {fileID: 6484584840102127192}
-  m_raycastOrigins:
-  - {fileID: 3460873449086223520}
-  - {fileID: 9110325196190618518}
-  - {fileID: 4789158923856645713}
-  m_movementSpeed: 10
 --- !u!50 &6484584840102127192
 Rigidbody2D:
   serializedVersion: 4
@@ -358,6 +339,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7084856, y: 1.51248}
   m_EdgeRadius: 0
+--- !u!114 &6484584839595061203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6484584840102127198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00dcfa468c0c4784ba0517e632c7efc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_floorRayCastDistance: 0.2
+  m_body: {fileID: 6484584840102127192}
+  m_groundTestOrigins:
+  - {fileID: 3460873449086223520}
+  - {fileID: 9110325196190618518}
+  - {fileID: 4789158923856645713}
+  m_movementSpeed: 10
 --- !u!1 &6484584840836697287
 GameObject:
   m_ObjectHideFlags: 0

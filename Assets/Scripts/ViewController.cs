@@ -30,8 +30,8 @@ public class ViewController : MonoBehaviour
         m_spriteTransform.localScale = scale;
     }
 
-    public void Move(float xDirection)
+    public void Move(Vector2 direction)
     {
-        m_animator.SetBool("Walking", Mathf.Abs(xDirection) > 0.5f);
+        m_animator.SetBool("Walking", Mathf.Abs(direction.x) > 0.5f);
     }
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1761203935765613201}
   - component: {fileID: 6580657736303121389}
   m_Layer: 0
-  m_Name: Projectile
+  m_Name: LaserProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_velocity: 30
-  m_tailLength: 100
+  m_tailLength: 1
   m_lineRenderer: {fileID: 6580657736303121389}
 --- !u!120 &6580657736303121389
 LineRenderer:
