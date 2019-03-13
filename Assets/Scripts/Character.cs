@@ -6,6 +6,9 @@ public class Character : MonoBehaviour, IDamageable
     protected float m_health;
 
     [SerializeField]
+    private LevelTimer m_levelTimer;
+
+    [SerializeField]
     private float m_maxHealth = 1;
 
     [SerializeField]
@@ -19,6 +22,7 @@ public class Character : MonoBehaviour, IDamageable
 
     protected virtual void Awake()
     {
+        m_levelTimer = GameObject.FindObjectOfType<LevelTimer>();
         m_health = m_maxHealth;
     }
 
@@ -37,15 +41,15 @@ public class Character : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
-
-        Debug.Log("Took damage: " + amount + " damage bringing health down from " + m_health + " to " + (m_health - amount) + ".");
         m_health -= amount;
 
-        if (m_health <= 0)
-            OnDestroyed();
+        if (m_health <= 0) {
+            m_levelTimer.AddTime((amount - 1) * 2);
+            Destroy();
+        }
     }
 
-    public void OnDestroyed()
+    public virtual void Destroy()
     {
         Destroy(gameObject);
     }

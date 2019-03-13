@@ -13,7 +13,7 @@ public abstract class Trajectory : MonoBehaviour
     public abstract float Continue(float velocity);
     public abstract Vector3 GetCurrentPosition();
     public abstract Vector3 GetCurrentDirection();
-    public abstract void DrawTrajectory();
+    public abstract void DrawDebugTrajectory();
     public abstract float GetCurrentDistance();
     public abstract void GetTrajectoryAtDistance(float distance, out Vector3 position, out Vector3 direction);
     public abstract float GetTrajectoryLength();

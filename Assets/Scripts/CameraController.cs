@@ -23,6 +23,9 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
+        if (m_target == null)
+            return;
+
         Vector3 adjustedMousePos = Input.mousePosition - new Vector3(Screen.width / 2f, Screen.height / 2f);
         adjustedMousePos /= Screen.width;
 

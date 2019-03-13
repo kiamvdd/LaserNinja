@@ -8,6 +8,8 @@ public abstract class Projectile : MonoBehaviour
     protected bool m_initialized = false;
     protected Vector3 m_currentDirection;
 
+    protected Trajectory m_aimGuideTrajectory = null;
+
     protected int m_layerMask = 0;
 
     [SerializeField]
@@ -43,4 +45,6 @@ public abstract class Projectile : MonoBehaviour
         OnDestroyed(this);
         OnDestroyed = null;
     }
+
+    public abstract Vector3[] GetAimingTrajectory(Vector3 startPosition, Vector3 direction);
 }

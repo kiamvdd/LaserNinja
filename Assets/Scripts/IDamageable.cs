@@ -5,5 +5,5 @@ using UnityEngine;
 public interface IDamageable
 {
     void TakeDamage(float amount);
-    void OnDestroyed();
+    void Destroy();
 }

@@ -23,7 +23,7 @@ public class LaserProjectile : Projectile
         if (cameraControllerObj != null) {
             CameraController controller = cameraControllerObj.GetComponent<CameraController>();
             if (controller != null)
-                m_trajectory.OnBounce += () => { controller.StartShake(0.4f, 5, 1, 0); };
+                m_trajectory.OnBounce += () => { controller.StartShake(0.2f, 5, 0.5f, 0); };
         }
 
         m_lineRenderer.positionCount = 2;
@@ -70,7 +70,7 @@ public class LaserProjectile : Projectile
 
     private float CalculateDamage()
     {
-        return m_trajectory.GetCornersBetween(-1, m_trajectory.GetCurrentDistance(), includeEndPoints: false).Count;
+        return m_trajectory.GetCornersBetween(-1, m_trajectory.GetCurrentDistance(), includeEndPoints: false).Count + 1;
     }
 
     private void MoveAlongTrajectory()
@@ -104,5 +104,17 @@ public class LaserProjectile : Projectile
     {
         m_markedForDestroy = true;
         Destroy(gameObject);
+    }
+
+    public override Vector3[] GetAimingTrajectory(Vector3 startPosition, Vector3 direction)
+    {
+        if (m_aimGuideTrajectory == null)
+            m_aimGuideTrajectory = new BounceTrajectory(1, true);
+
+        BounceTrajectory t = m_aimGuideTrajectory as BounceTrajectory;
+        t.CalculateTrajectory(startPosition, direction);
+        List<Vector3> corners = t.GetCornersBetween(-1, t.GetDistanceFromProgress(1) + 1);
+
+        return corners.ToArray();
     }
 }

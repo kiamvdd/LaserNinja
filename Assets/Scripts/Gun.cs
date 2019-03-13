@@ -17,9 +17,21 @@ public class Gun : MonoBehaviour
     private Animator m_animator;
     private bool m_canShoot = true;
 
+    [SerializeField]
+    private LineRenderer m_aimingGuideLineRenderer;
+
+    private bool m_aiming = false;
+
+    private Projectile m_aimingGuideDummy = null;
+
+    private void Awake()
+    {
+        m_aimingGuideLineRenderer.enabled = false;
+    }
+
     public void Fire(Vector3 direction)
     {
-        if (!m_canShoot)
+        if (!m_aiming)
             return;
 
         Projectile projectile = Instantiate(m_projectilePrefab);
@@ -39,6 +51,26 @@ public class Gun : MonoBehaviour
         m_canShoot = false;
     }
 
+    public void SetAimingGuideEnabled(bool enabled)
+    {
+        m_aiming = enabled;
+        m_aimingGuideLineRenderer.enabled = enabled;
+    }
+
+    public void ShowAimingGuide(Vector3 direction)
+    {
+        if (!m_aiming)
+            return;
+
+        if (m_aimingGuideDummy == null)
+            m_aimingGuideDummy = m_projectilePrefab.GetComponent<Projectile>();
+
+        Vector3[] positions = m_aimingGuideDummy.GetAimingTrajectory(m_barrel.position, direction);
+
+        m_aimingGuideLineRenderer.positionCount = positions.Length; 
+        m_aimingGuideLineRenderer.SetPositions(m_aimingGuideDummy.GetAimingTrajectory(m_barrel.position, direction));
+    }
+
     public void DrawTrajectory()
     {
         BounceTrajectory trajectory = new BounceTrajectory(2, clampTrajectory: true);
@@ -46,6 +78,5 @@ public class Gun : MonoBehaviour
 
     private void OnProjectileDestroyed(Projectile projectile)
     {
-        m_canShoot = true;
     }
 }

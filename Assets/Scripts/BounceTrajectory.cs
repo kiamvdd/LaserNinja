@@ -107,13 +107,6 @@ public class BounceTrajectory : Trajectory
         return m_currentPosition;
     }
 
-    public override void DrawTrajectory()
-    {
-        for (int i = 0; i < m_trajectoryPositions.Count - 1; i++) {
-            Debug.DrawLine(m_trajectoryPositions[i], m_trajectoryPositions[i + 1], Color.black);
-        }
-    }
-
     public override float GetCurrentDistance()
     {
         return m_distanceTraversed;
@@ -198,4 +191,13 @@ public class BounceTrajectory : Trajectory
     {
         OnBounce = null;
     }
+
+#if UNITY_EDITOR
+    public override void DrawDebugTrajectory()
+    {
+        for (int i = 0; i < m_trajectoryPositions.Count - 1; i++) {
+            Debug.DrawLine(m_trajectoryPositions[i], m_trajectoryPositions[i + 1], Color.white);
+        }
+    }
+#endif
 }
