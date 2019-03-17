@@ -17,6 +17,9 @@ public class LevelTimer : MonoBehaviour
     private GameObject m_gameOverText;
 
     [SerializeField]
+    private GameObject m_winText;
+
+    [SerializeField]
     private PlayerCharacter m_player;
 
     private float m_timer = 0;
@@ -26,6 +29,12 @@ public class LevelTimer : MonoBehaviour
     private void Awake()
     {
         m_timer = m_startTime;
+    }
+
+    public void EndLevel()
+    {
+        enabled = false;
+        m_winText.SetActive(true);
     }
 
     private void Update()
@@ -58,7 +67,6 @@ public class LevelTimer : MonoBehaviour
     public void AddTime(float time)
     {
         m_timer += time;
-
         StartCoroutine(FlashTimer());
     }
 
