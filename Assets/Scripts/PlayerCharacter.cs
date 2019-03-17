@@ -1,15 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerCharacter : Character
 {
     [SerializeField]
     private float m_jumpForce = 10;
+    [SerializeField]
+    private float m_wallJumpForce = 10;
     private bool m_jumping = false;
 
     [SerializeField]
     private Gun m_gun;
+
+    [SerializeField]
+    private PlayerBody2D m_playerBody;
 
     [SerializeField]
     private float m_slowmoSpeed = 0.2f;
@@ -17,6 +20,12 @@ public class PlayerCharacter : Character
 
     [SerializeField]
     private ParticleSystem m_deathParticles;
+
+    [SerializeField]
+    private ParticleSystem m_jumpParticles;
+
+    [SerializeField]
+    private SoundClip m_jumpSound;
 
     protected override void Awake()
     {
@@ -31,24 +40,49 @@ public class PlayerCharacter : Character
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         Move(new Vector2(h, 0));
 
-
         // Jumping logic
-
-        if (m_characterBody.IsGrounded && !m_jumping) {
-            if (Input.GetButtonDown("Jump")) {
-                m_characterBody.ApplyImpulse(new Vector2(0, m_jumpForce));
-                m_jumping = true;
-            }
+        if (((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0)) && m_playerBody.Velocity.y < 0) {
+            Vector2 v = m_playerBody.MaxMoveVelocity;
+            v.y = 8;
+            m_playerBody.MaxMoveVelocity = v;
         } else {
-            if (!Input.GetButton("Jump"))
-                m_jumping = false;
-
-            if (m_characterBody.Velocity.y > 0 && m_jumping)
-                m_characterBody.GravityScale = 3;
-            else
-                m_characterBody.GravityScale = 6;
+            Vector2 v = m_playerBody.MaxMoveVelocity;
+            v.y = 0;
+            m_playerBody.MaxMoveVelocity = v;
         }
 
+        if (m_playerBody.IsGrounded && !m_jumping) {
+            if (Input.GetButtonDown("Jump")) {
+                Jump(new Vector2(0, m_jumpForce));
+            }
+        } else {
+            if (m_jumping) {
+                if (!Input.GetButton("Jump"))
+                    m_jumping = false;
+
+                if (m_playerBody.Velocity.y > 0 && m_jumping)
+                    m_playerBody.GravityScale = 3;
+                else
+                    m_playerBody.GravityScale = 6;
+            } else {
+                if (Input.GetButtonDown("Jump")) {
+                    if (m_playerBody.TouchingLeftWall) {
+                        Vector2 v = m_playerBody.MaxMoveVelocity;
+                        v.y = 0;
+                        m_playerBody.MaxMoveVelocity = v;
+
+                        Jump(new Vector2(m_wallJumpForce, m_jumpForce));
+
+                    } else if (m_playerBody.TouchingRightWall) {
+                        Vector2 v = m_playerBody.MaxMoveVelocity;
+                        v.y = 0;
+                        m_playerBody.MaxMoveVelocity = v;
+
+                        Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
+                    }
+                }
+            }
+        }
 
         // Aiming / gun logic
 
@@ -71,10 +105,26 @@ public class PlayerCharacter : Character
         }
     }
 
+    private void Jump(Vector2 jumpForce)
+    {
+        m_playerBody.SetVelocity(jumpForce);
+        m_jumping = true;
+        m_jumpParticles.Play();
+        m_jumpSound.Play();
+    }
+
     public override void Destroy()
     {
         m_deathParticles.transform.parent = null;
         m_deathParticles.Play();
         base.Destroy();
+    }
+
+    protected override void Move(Vector2 direction)
+    {
+        m_playerBody.Move(direction);
+
+        if (m_viewController != null)
+            m_viewController.Move(direction);
     }
 }

@@ -14,10 +14,15 @@ public class LaserProjectile : Projectile
 
     private bool m_markedForDestroy = false;
 
+    [SerializeField]
+    private SoundClip m_bounceSound;
+
     public override void Init(Vector3 direction, int layerMask)
     {
         m_trajectory = new BounceTrajectory(10, clampTrajectory: true);
         m_trajectory.CalculateTrajectory(transform.position, direction);
+
+        m_trajectory.OnBounce += m_bounceSound.Play;
 
         GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
         if (cameraControllerObj != null) {
@@ -41,6 +46,7 @@ public class LaserProjectile : Projectile
         base.FixedUpdate();
 
         MoveAlongTrajectory();
+        m_trajectory.DrawDebugTrajectory();
 
         if (!m_markedForDestroy)
             CheckCollision();

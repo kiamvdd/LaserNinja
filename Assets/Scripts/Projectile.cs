@@ -14,6 +14,10 @@ public abstract class Projectile : MonoBehaviour
 
     [SerializeField]
     protected float m_velocity = 15;
+
+    [SerializeField]
+    private AudioSource m_blastAudio;
+
     public delegate void ProjectileDestroyed(Projectile projectile);
 
     public event ProjectileDestroyed OnDestroyed;
@@ -22,6 +26,7 @@ public abstract class Projectile : MonoBehaviour
         m_layerMask = layerMask;
         m_currentDirection = direction;
         m_initialized = true;
+        m_blastAudio.Play();
     }
 
     protected virtual void FixedUpdate()

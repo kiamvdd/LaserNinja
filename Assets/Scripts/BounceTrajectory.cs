@@ -8,8 +8,7 @@ public class BounceTrajectory : Trajectory
     private List<float> m_distances = new List<float>();
     private float m_totalDistance = 0;
 
-    private float m_nextCornerDistance;
-    private int m_currentCorner = 0;
+    private int m_currentCornerCount = 0;
 
     private Vector3 m_currentPosition;
     private Vector3 m_currentDirection;
@@ -42,6 +41,7 @@ public class BounceTrajectory : Trajectory
         m_trajectoryPositions.Clear();
         m_trajectoryPositions.Add(position);
         m_distances.Clear();
+        m_currentCornerCount = 0;
 
         Vector3 currentPosition = position;
         m_currentPosition = currentPosition;
@@ -70,8 +70,6 @@ public class BounceTrajectory : Trajectory
             m_distances.Add(distance);
             currentBounce++;
         }
-
-        m_nextCornerDistance = m_distances.Count > 2 ? m_distances[1] : Mathf.Infinity;
     }
 
     /// <summary>
@@ -83,9 +81,10 @@ public class BounceTrajectory : Trajectory
     public override float Continue(float velocity)
     {
         m_distanceTraversed += velocity;
-        if (m_currentCorner < m_distances.Count - 2 && m_distanceTraversed > m_nextCornerDistance && m_distanceTraversed < m_totalDistance) {
-            m_currentCorner++;
-            m_nextCornerDistance += m_distances[m_currentCorner + 1];
+
+        int cornerCount = GetCornersBetween(-1, m_distanceTraversed).Count;
+        if (cornerCount > m_currentCornerCount) {
+            m_currentCornerCount++;
             OnBounce();
         }
 
@@ -197,6 +196,10 @@ public class BounceTrajectory : Trajectory
     {
         for (int i = 0; i < m_trajectoryPositions.Count - 1; i++) {
             Debug.DrawLine(m_trajectoryPositions[i], m_trajectoryPositions[i + 1], Color.white);
+        }
+
+        foreach (Vector3 pos in m_trajectoryPositions) {
+            Debug.DrawLine(pos, pos + Vector3.down, Color.white, 1);
         }
     }
 #endif
