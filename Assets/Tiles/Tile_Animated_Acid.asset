@@ -9,28 +9,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
   m_Name: Tile_Animated_Acid
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Transform:
-    e00: 1
-    e01: 0
-    e02: 0
-    e03: 0
-    e10: 0
-    e11: 1
-    e12: 0
-    e13: 0
-    e20: 0
-    e21: 0
-    e22: 1
-    e23: 0
-    e30: 0
-    e31: 0
-    e32: 0
-    e33: 1
-  m_InstancedGameObject: {fileID: 0}
-  m_Flags: 1
-  m_ColliderType: 1
+  m_AnimatedSprites:
+  - {fileID: 21300000, guid: 6f548e14ab67ed140954349d28374d72, type: 3}
+  - {fileID: 21300000, guid: e294e78278d2d954daba3cb6d44a0e12, type: 3}
+  - {fileID: 21300000, guid: 4cbe1c182c4bc4b40b8740495f48c29e, type: 3}
+  - {fileID: 21300000, guid: b95bc79d525d29d46aec57f1821e728a, type: 3}
+  - {fileID: 21300000, guid: 06c3c5d47b4683a4dbe1e58202c23a59, type: 3}
+  - {fileID: 21300000, guid: 4c6a045206bbc0144a477c6284cc7449, type: 3}
+  - {fileID: 21300000, guid: a6b1c98d54bb33b4099482757b14095d, type: 3}
+  - {fileID: 21300000, guid: d6095fe1da7b55e4e8f922ab5fa0d73b, type: 3}
+  - {fileID: 21300000, guid: d51c01bbdad62a34a862e1d7133b8958, type: 3}
+  - {fileID: 21300000, guid: dc3a6a0f58103e54db513083f6fefcaf, type: 3}
+  - {fileID: 21300000, guid: f654b677d6fc9e54f834ab196ca9f0e8, type: 3}
+  - {fileID: 21300000, guid: 8525578642262bb4eb683fba726da26d, type: 3}
+  - {fileID: 21300000, guid: 07f671a71aaa90a47a4e26690a3ada54, type: 3}
+  - {fileID: 21300000, guid: 422885a3402489d43b1ee646b11c0e18, type: 3}
+  - {fileID: 21300000, guid: fca80fc74607a97468a5dfee0737ea20, type: 3}
+  - {fileID: 21300000, guid: 86c47002ac4b86644a3130a9c1e4af04, type: 3}
+  m_MinSpeed: 8
+  m_MaxSpeed: 8
+  m_AnimationStartTime: 0
+  m_TileColliderType: 0

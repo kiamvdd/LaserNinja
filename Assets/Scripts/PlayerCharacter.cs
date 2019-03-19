@@ -130,6 +130,8 @@ public class PlayerCharacter : Character
         LevelTimer levelTimer = FindObjectOfType<LevelTimer>();
         levelTimer.EndLevel(false);
 
+        SetTimeScale(1);
+
         base.Destroy();
     }
 
