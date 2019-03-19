@@ -15,39 +15,66 @@ public class LevelTimer : MonoBehaviour
 
     [SerializeField]
     private GameObject m_gameOverText;
-
     [SerializeField]
     private GameObject m_winText;
+    [SerializeField]
+    private GameObject m_anyKeyText;
 
     [SerializeField]
     private PlayerCharacter m_player;
+
+    [SerializeField]
+    private SoundClip m_music;
 
     private float m_timer = 0;
 
     private bool m_levelEnd = false;
 
+    private bool m_timerActive = false;
+
     private void Awake()
     {
         m_timer = m_startTime;
+        TimeSpan ts = TimeSpan.FromSeconds(m_timer);
+        m_text.text = ts.ToString(@"mm\:ss\:ff");
     }
 
-    public void EndLevel()
+    public void EndLevel(bool win)
     {
-        enabled = false;
-        m_winText.SetActive(true);
+        if (m_levelEnd)
+            return;
+
+        if (win) {
+            enabled = false;
+            m_winText.SetActive(true);
+            m_levelEnd = true;
+        } else {
+            m_timer = 0;
+            m_text.enabled = false;
+            m_gameOverText.SetActive(true);
+            m_levelEnd = true;
+        }
     }
 
     private void Update()
     {
+        if (!m_timerActive) {
+            if (Input.anyKeyDown) {
+                m_timerActive = true;
+                m_anyKeyText.SetActive(false);
+                m_music.Play();
+            }
+
+            return;
+        }
+
         if (m_levelEnd) {
             m_timer += Time.deltaTime;
 
             if (m_timer > 2)
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
             return;
         }
-
 
         m_timer -= Time.deltaTime;
         TimeSpan ts = TimeSpan.FromSeconds(m_timer);
@@ -55,13 +82,8 @@ public class LevelTimer : MonoBehaviour
         m_text.text = ts.ToString(@"mm\:ss\:ff");
 
         if (m_timer <= 0 && !m_levelEnd) {
-            m_timer = 0;
             m_player.Destroy();
-            m_text.enabled = false;
-            m_gameOverText.SetActive(true);
-            m_levelEnd = true;
         }
-
     }
 
     public void AddTime(float time)

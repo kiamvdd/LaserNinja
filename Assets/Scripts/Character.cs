@@ -12,7 +12,7 @@ public abstract class Character : MonoBehaviour, IDamageable
     protected float m_movementSpeed = 10;
 
     [SerializeField]
-    protected ViewController m_viewController;
+    protected View m_viewController;
 
     protected virtual void Awake()
     {

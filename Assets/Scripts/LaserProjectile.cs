@@ -17,7 +17,7 @@ public class LaserProjectile : Projectile
     [SerializeField]
     private SoundClip m_bounceSound;
 
-    public override void Init(Vector3 direction, int layerMask)
+    public override void Init(Vector3 direction, float damageBonus, int layerMask)
     {
         m_trajectory = new BounceTrajectory(10, clampTrajectory: true);
         m_trajectory.CalculateTrajectory(transform.position, direction);
@@ -35,7 +35,7 @@ public class LaserProjectile : Projectile
         Vector3 pos = m_trajectory.GetCurrentPosition();
         m_lineRenderer.SetPosition(0, pos);
         m_lineRenderer.SetPosition(1, pos);
-        base.Init(direction, layerMask);
+        base.Init(direction, damageBonus, layerMask);
     }
 
     protected override void FixedUpdate()
@@ -46,7 +46,10 @@ public class LaserProjectile : Projectile
         base.FixedUpdate();
 
         MoveAlongTrajectory();
+
+#if UNITY_EDITOR
         m_trajectory.DrawDebugTrajectory();
+#endif
 
         if (!m_markedForDestroy)
             CheckCollision();

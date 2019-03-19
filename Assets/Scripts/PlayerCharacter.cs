@@ -53,7 +53,7 @@ public class PlayerCharacter : Character
 
         if (m_playerBody.IsGrounded && !m_jumping) {
             if (Input.GetButtonDown("Jump")) {
-                Jump(new Vector2(0, m_jumpForce));
+                Jump(new Vector2(0, m_jumpForce), true);
             }
         } else {
             if (m_jumping) {
@@ -87,11 +87,10 @@ public class PlayerCharacter : Character
         // Aiming / gun logic
 
         if (Input.GetMouseButtonDown(0))
-            m_gun.Fire(m_viewController.LookDirection);
+            m_gun.Fire(m_viewController.LookDirection, 0);
 
         if (Input.GetMouseButtonDown(1)) {
-            Time.timeScale = m_slowmoSpeed;
-            Time.fixedDeltaTime = m_slowmoSpeed * 0.02f;
+            SetTimeScale(m_slowmoSpeed);
             m_gun.SetAimingGuideEnabled(true);
         }
 
@@ -100,23 +99,37 @@ public class PlayerCharacter : Character
 
         if (Input.GetMouseButtonUp(1) || Input.GetMouseButtonDown(0)) {
             m_gun.SetAimingGuideEnabled(false);
-            Time.timeScale = 1;
-            Time.fixedDeltaTime = 0.02f;
+            SetTimeScale(1);
         }
     }
 
-    private void Jump(Vector2 jumpForce)
+    private void SetTimeScale(float timeScale)
     {
-        m_playerBody.SetVelocity(jumpForce);
+        Time.timeScale = timeScale;
+        Time.fixedDeltaTime = timeScale * 0.02f;
+    }
+
+    private void Jump(Vector2 jumpForce, bool impulse = false)
+    {
+        if (impulse)
+            m_playerBody.ApplyImpulse(jumpForce);
+        else
+            m_playerBody.SetVelocity(jumpForce);
+
         m_jumping = true;
         m_jumpParticles.Play();
         m_jumpSound.Play();
+        m_viewController.Animator.SetTrigger("Jump");
     }
 
     public override void Destroy()
     {
         m_deathParticles.transform.parent = null;
         m_deathParticles.Play();
+
+        LevelTimer levelTimer = FindObjectOfType<LevelTimer>();
+        levelTimer.EndLevel(false);
+
         base.Destroy();
     }
 

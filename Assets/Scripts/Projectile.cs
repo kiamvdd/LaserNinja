@@ -21,8 +21,12 @@ public abstract class Projectile : MonoBehaviour
     public delegate void ProjectileDestroyed(Projectile projectile);
 
     public event ProjectileDestroyed OnDestroyed;
-    public virtual void Init(Vector3 direction, int layerMask)
+
+    protected float m_damageBonus = 0;
+
+    public virtual void Init(Vector3 direction, float damageBonus, int layerMask)
     {
+        m_damageBonus = damageBonus;
         m_layerMask = layerMask;
         m_currentDirection = direction;
         m_initialized = true;

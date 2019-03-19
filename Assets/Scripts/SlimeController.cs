@@ -50,7 +50,7 @@ public class SlimeController : Character
         base.TakeDamage(amount);
 
         if (m_health <= 0)
-            m_levelTimer.AddTime((amount - 1) * 1.5f);
+            m_levelTimer.AddTime((amount - 1) * 1.2f);
     }
 
     public override void Destroy()
@@ -67,5 +67,13 @@ public class SlimeController : Character
 
         if (m_viewController != null)
             m_viewController.Move(direction);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player")) {
+            IDamageable damageable = collision.collider.GetComponent<IDamageable>();
+            damageable.Destroy();
+        }
     }
 }

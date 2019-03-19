@@ -9,6 +9,6 @@ public class LevelFinish : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
-            m_levelTimer.EndLevel();
+            m_levelTimer.EndLevel(true);
     }
 }
