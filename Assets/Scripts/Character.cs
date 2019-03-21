@@ -39,4 +39,9 @@ public abstract class Character : MonoBehaviour, IDamageable
     {
         Destroy(gameObject);
     }
+
+    public virtual bool IsAlive()
+    {
+        return m_health > 0;
+    }
 }

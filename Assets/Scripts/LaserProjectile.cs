@@ -17,7 +17,7 @@ public class LaserProjectile : Projectile
     [SerializeField]
     private SoundClip m_bounceSound;
 
-    public override void Init(Vector3 direction, float damageBonus, int layerMask)
+    public override void Init(Vector3 direction, PlayerCharacter.ShotInfo trickInfo, int layerMask)
     {
         m_trajectory = new BounceTrajectory(10, clampTrajectory: true);
         m_trajectory.CalculateTrajectory(transform.position, direction);
@@ -35,7 +35,7 @@ public class LaserProjectile : Projectile
         Vector3 pos = m_trajectory.GetCurrentPosition();
         m_lineRenderer.SetPosition(0, pos);
         m_lineRenderer.SetPosition(1, pos);
-        base.Init(direction, damageBonus, layerMask);
+        base.Init(direction, trickInfo, layerMask);
     }
 
     protected override void FixedUpdate()
@@ -63,17 +63,27 @@ public class LaserProjectile : Projectile
         if (hit.collider != null) {
             IDamageable damageable = hit.collider.gameObject.GetComponent<IDamageable>();
             if (damageable != null) {
-                damageable.TakeDamage(CalculateDamage());
-
-                GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
-                if (cameraControllerObj != null) {
-                    CameraController controller = cameraControllerObj.GetComponent<CameraController>();
-                    if (controller != null)
-                        controller.StartShake(0.4f, 5, 1, 0);
-                }
-
+                ApplyDamage(damageable);
                 MarkForDestroy();
             }
+        }
+    }
+
+    private void ApplyDamage(IDamageable damageable)
+    {
+        float damage = CalculateDamage();
+        damageable.TakeDamage(CalculateDamage());
+
+        m_trickInfo.baseDamage = damage;
+
+        if (!damageable.IsAlive())
+            EventBus.OnEnemyKilled(m_trickInfo);
+
+        GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
+        if (cameraControllerObj != null) {
+            CameraController controller = cameraControllerObj.GetComponent<CameraController>();
+            if (controller != null)
+                controller.StartShake(0.4f, 5, 1, 0);
         }
     }
 

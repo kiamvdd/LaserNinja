@@ -6,4 +6,5 @@ public interface IDamageable
 {
     void TakeDamage(float amount);
     void Destroy();
+    bool IsAlive();
 }

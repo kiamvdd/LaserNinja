@@ -48,9 +48,6 @@ public class SlimeController : Character
     public override void TakeDamage(float amount)
     {
         base.TakeDamage(amount);
-
-        if (m_health <= 0)
-            m_levelTimer.AddTime((amount - 1) * 1.2f);
     }
 
     public override void Destroy()

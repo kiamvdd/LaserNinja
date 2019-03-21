@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,8 +31,12 @@ public class LevelTimer : MonoBehaviour
 
     private bool m_timerActive = false;
 
+    [SerializeField]
+    private int m_nextSceneIndex = -1;
+
     private void Awake()
     {
+        EventBus.OnEnemyKilled += OnEnemyKilled;
         m_timer = m_startTime;
         TimeSpan ts = TimeSpan.FromSeconds(m_timer);
         m_text.text = ts.ToString(@"mm\:ss\:ff");
@@ -48,12 +51,22 @@ public class LevelTimer : MonoBehaviour
             enabled = false;
             m_winText.SetActive(true);
             m_levelEnd = true;
+
+            if (m_nextSceneIndex != -1)
+                StartCoroutine(LoadSceneAfterSeconds(m_nextSceneIndex, 2));
+
         } else {
             m_timer = 0;
             m_text.enabled = false;
             m_gameOverText.SetActive(true);
             m_levelEnd = true;
         }
+    }
+
+    private IEnumerator LoadSceneAfterSeconds(int buildIndex, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        SceneManager.LoadScene(buildIndex);
     }
 
     private void Update()
@@ -86,10 +99,28 @@ public class LevelTimer : MonoBehaviour
         }
     }
 
-    public void AddTime(float time)
+    private void AddTime(float time)
     {
         m_timer += time;
         StartCoroutine(FlashTimer());
+    }
+
+    private void OnEnemyKilled(PlayerCharacter.ShotInfo shotInfo)
+    {
+        float time = shotInfo.baseDamage * 0.5f;
+
+        if (shotInfo.playerMoving)
+            time += 1;
+
+        if (shotInfo.playerMoving)
+            time += 2;
+
+        AddTime(time);
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.OnEnemyKilled -= OnEnemyKilled;
     }
 
     private IEnumerator FlashTimer()

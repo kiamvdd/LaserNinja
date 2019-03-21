@@ -27,6 +27,20 @@ public class PlayerCharacter : Character
     [SerializeField]
     private SoundClip m_jumpSound;
 
+    public class ShotInfo
+    {
+        public ShotInfo()
+        {
+            baseDamage = 0;
+            playerMoving = false;
+            playerJumping= false;
+        }
+
+        public float baseDamage;
+        public bool playerMoving;
+        public bool playerJumping;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -47,7 +61,7 @@ public class PlayerCharacter : Character
             m_playerBody.MaxMoveVelocity = v;
         } else {
             Vector2 v = m_playerBody.MaxMoveVelocity;
-            v.y = 0;
+            v.y = 32;
             m_playerBody.MaxMoveVelocity = v;
         }
 
@@ -68,14 +82,14 @@ public class PlayerCharacter : Character
                 if (Input.GetButtonDown("Jump")) {
                     if (m_playerBody.TouchingLeftWall) {
                         Vector2 v = m_playerBody.MaxMoveVelocity;
-                        v.y = 0;
+                        v.y = 32    ;
                         m_playerBody.MaxMoveVelocity = v;
 
                         Jump(new Vector2(m_wallJumpForce, m_jumpForce));
 
                     } else if (m_playerBody.TouchingRightWall) {
                         Vector2 v = m_playerBody.MaxMoveVelocity;
-                        v.y = 0;
+                        v.y = 32;
                         m_playerBody.MaxMoveVelocity = v;
 
                         Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
@@ -86,8 +100,9 @@ public class PlayerCharacter : Character
 
         // Aiming / gun logic
 
-        if (Input.GetMouseButtonDown(0))
-            m_gun.Fire(m_viewController.LookDirection, 0);
+        if (Input.GetMouseButtonDown(0)) {
+            m_gun.Fire(m_viewController.LookDirection, GetCurrentTrickInfo());
+        }
 
         if (Input.GetMouseButtonDown(1)) {
             SetTimeScale(m_slowmoSpeed);
@@ -101,6 +116,14 @@ public class PlayerCharacter : Character
             m_gun.SetAimingGuideEnabled(false);
             SetTimeScale(1);
         }
+    }
+
+    private ShotInfo GetCurrentTrickInfo() {
+        ShotInfo trickInfo = new ShotInfo();
+        trickInfo.playerJumping = !m_playerBody.IsGrounded;
+        trickInfo.playerMoving = Mathf.Abs(m_playerBody.Velocity.x) > float.Epsilon;
+
+        return trickInfo;
     }
 
     private void SetTimeScale(float timeScale)
