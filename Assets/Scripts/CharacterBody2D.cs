@@ -18,12 +18,28 @@ public class CharacterBody2D : MonoBehaviour
     public Vector2 MaxMoveVelocity { get { return m_maxMoveVelocity; } set { m_maxMoveVelocity = value; } }
 
     [SerializeField]
-    private Vector2 m_acceleration = new Vector2(30, 0);
-    public Vector2 Acceleration { get { return m_acceleration; } set { m_acceleration = value; } }
+    private Vector2 m_groundAcceleration = new Vector2(30, 0);
+    public Vector2 GroundAcceleration { get { return m_groundAcceleration; } set { m_groundAcceleration = value; } }
 
     [SerializeField]
-    private Vector2 m_deceleration = new Vector2(60, 0);
-    public Vector2 Deceleration { get { return m_deceleration; } set { m_deceleration = value; } }
+    private Vector2 m_airAcceleration = new Vector2(30, 0);
+    public Vector2 AirAcceleration { get { return m_airAcceleration; } set { m_airAcceleration = value; } }
+
+    [SerializeField]
+    private Vector2 m_groundAutoDeceleration = new Vector2(120, 0);
+    public Vector2 GroundAutoDeceleration { get { return m_groundAutoDeceleration; } set { m_groundAutoDeceleration = value; } }
+
+    [SerializeField]
+    private Vector2 m_airAutoDeceleration = new Vector2(60, 0);
+    public Vector2 AirAutoDeceleration { get { return m_airAutoDeceleration; } set { m_airAutoDeceleration = value; } }
+
+    [SerializeField]
+    private Vector2 m_groundDirectionChangeDeceleration = new Vector2(60, 0);
+    public Vector3 GroundDirectionChangeDeceleration { get { return m_groundDirectionChangeDeceleration; } set { m_groundDirectionChangeDeceleration = value; } }
+
+    [SerializeField]
+    private Vector2 m_airDirectionChangeDeceleration = new Vector2(60, 0);
+    public Vector3 AirDirectionChangeDeceleration { get { return m_airDirectionChangeDeceleration; } set { m_airDirectionChangeDeceleration = value; } }
 
     private Vector2 m_lastAcceleration = Vector2.zero;
 
@@ -40,8 +56,17 @@ public class CharacterBody2D : MonoBehaviour
 
     public void Move(Vector2 direction)
     {
-        m_lastAcceleration = direction * Acceleration;
+        Vector2 changeMultiplier = Vector2.zero;
+
+        if ((m_lastAcceleration.x > 0 && m_body.velocity.x < 0) || (m_lastAcceleration.x < 0 && m_body.velocity.x > 0))
+            changeMultiplier.x = 1;
+
+        if ((m_lastAcceleration.y > 0 && m_body.velocity.y < 0) || (m_lastAcceleration.y < 0 && m_body.velocity.y > 0))
+            changeMultiplier.y = 1;
+
+        m_lastAcceleration = direction * (IsGrounded ? GroundAcceleration : AirAcceleration) + direction * changeMultiplier * (IsGrounded ? GroundDirectionChangeDeceleration : AirDirectionChangeDeceleration);
         m_body.AddForce(m_lastAcceleration);
+
 
         ClampVelocity();
     }
@@ -50,14 +75,22 @@ public class CharacterBody2D : MonoBehaviour
     {
         Vector3 velocity = m_body.velocity;
 
-        bool changingX = ((m_lastAcceleration.x > 0 && velocity.x < 0) || (m_lastAcceleration.x < 0 && velocity.x > 0));
-        if (changingX || Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
-            velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, Deceleration.x * Time.deltaTime);
-        }
+        if (IsGrounded) {
+            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, GroundAutoDeceleration.x * Time.deltaTime);
+            }
 
-        bool changingY = ((m_lastAcceleration.y > 0 && velocity.y < 0) || (m_lastAcceleration.y < 0 && velocity.y > 0));
-        if (changingY || Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
-            velocity.y = Mathf.MoveTowards(velocity.y, 0, Deceleration.y * Time.deltaTime);
+            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) { 
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, GroundAutoDeceleration.y * Time.deltaTime);
+            }
+        } else {
+            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, AirAutoDeceleration.x * Time.deltaTime);
+            }
+
+            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, AirAutoDeceleration.y * Time.deltaTime);
+            }
         }
 
         m_body.velocity = velocity;

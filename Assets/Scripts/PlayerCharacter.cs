@@ -1,23 +1,36 @@
 ﻿using UnityEngine;
-
+using Helpers;
 public class PlayerCharacter : Character
 {
+    #region Data members
+    [Header("Body")]
+    [SerializeField]
+    private PlayerBody2D m_playerBody;
+
+    [Header("Movement")]
+    private PlayerMovementState m_state = PlayerMovementState.IDLE;
+
     [SerializeField]
     private float m_jumpForce = 10;
     [SerializeField]
     private float m_wallJumpForce = 10;
-    private bool m_jumping = false;
 
     [SerializeField]
-    private Gun m_gun;
+    private float m_maxFallVelocity = 32;
 
     [SerializeField]
-    private PlayerBody2D m_playerBody;
+    private float m_jumpingGravity = 3;
+    [SerializeField]
+    private float m_fallingGravity = 6;
+
+    [SerializeField]
+    private float m_maxWallSlideVelocity = 1;
 
     [SerializeField]
     private float m_slowmoSpeed = 0.2f;
     private float m_physicsTimeStep;
 
+    [Header("FX")]
     [SerializeField]
     private ParticleSystem m_deathParticles;
 
@@ -27,13 +40,18 @@ public class PlayerCharacter : Character
     [SerializeField]
     private SoundClip m_jumpSound;
 
+    [Header("Other")]
+    [SerializeField]
+    private Gun m_gun;
+    #endregion
+
     public class ShotInfo
     {
         public ShotInfo()
         {
             baseDamage = 0;
             playerMoving = false;
-            playerJumping= false;
+            playerJumping = false;
         }
 
         public float baseDamage;
@@ -47,55 +65,37 @@ public class PlayerCharacter : Character
         m_physicsTimeStep = Time.fixedDeltaTime;
     }
 
+    private enum PlayerMovementState
+    {
+        IDLE,
+        RUNNING,
+        JUMPING,
+        FALLING,
+        WALLSLIDING,
+    }
+
     private void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        Move(new Vector2(h, 0));
 
-        // Jumping logic
-        if (((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0)) && m_playerBody.Velocity.y < 0) {
-            Vector2 v = m_playerBody.MaxMoveVelocity;
-            v.y = 8;
-            m_playerBody.MaxMoveVelocity = v;
-        } else {
-            Vector2 v = m_playerBody.MaxMoveVelocity;
-            v.y = 32;
-            m_playerBody.MaxMoveVelocity = v;
-        }
-
-        if (m_playerBody.IsGrounded && !m_jumping) {
-            if (Input.GetButtonDown("Jump")) {
-                Jump(new Vector2(0, m_jumpForce), true);
-            }
-        } else {
-            if (m_jumping) {
-                if (!Input.GetButton("Jump"))
-                    m_jumping = false;
-
-                if (m_playerBody.Velocity.y > 0 && m_jumping)
-                    m_playerBody.GravityScale = 3;
-                else
-                    m_playerBody.GravityScale = 6;
-            } else {
-                if (Input.GetButtonDown("Jump")) {
-                    if (m_playerBody.TouchingLeftWall) {
-                        Vector2 v = m_playerBody.MaxMoveVelocity;
-                        v.y = 32    ;
-                        m_playerBody.MaxMoveVelocity = v;
-
-                        Jump(new Vector2(m_wallJumpForce, m_jumpForce));
-
-                    } else if (m_playerBody.TouchingRightWall) {
-                        Vector2 v = m_playerBody.MaxMoveVelocity;
-                        v.y = 32;
-                        m_playerBody.MaxMoveVelocity = v;
-
-                        Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
-                    }
-                }
-            }
+        switch (m_state) {
+            case PlayerMovementState.IDLE:
+                ExecuteIdleState();
+                break;
+            case PlayerMovementState.RUNNING:
+                ExecuteRunningState();
+                break;
+            case PlayerMovementState.JUMPING:
+                ExecuteJumpingState();
+                break;
+            case PlayerMovementState.FALLING:
+                ExecuteFallingState();
+                break;
+            case PlayerMovementState.WALLSLIDING:
+                ExecuteWallSlideState();
+                break;
+            default:
+                break;
         }
 
         // Aiming / gun logic
@@ -118,7 +118,149 @@ public class PlayerCharacter : Character
         }
     }
 
-    private ShotInfo GetCurrentTrickInfo() {
+    private void ExecuteIdleState()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        if (Mathf.Abs(h) > float.Epsilon) {
+            SwitchMovementState(PlayerMovementState.RUNNING);
+            return;
+        }
+
+        if (!m_playerBody.IsGrounded) {
+            SwitchMovementState(PlayerMovementState.FALLING);
+            return;
+        }
+
+        if (Input.GetButtonDown("Jump")) {
+            Jump(new Vector2(0, m_jumpForce), true);
+            SwitchMovementState(PlayerMovementState.JUMPING);
+            return;
+        }
+    }
+
+    private void ExecuteRunningState()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        Move(new Vector2(h, 0));
+
+        if (!m_playerBody.IsGrounded) {
+            SwitchMovementState(PlayerMovementState.FALLING);
+            return;
+        }
+
+        if (Input.GetButtonDown("Jump")) {
+            Jump(new Vector2(0, m_jumpForce), true);
+            SwitchMovementState(PlayerMovementState.JUMPING);
+            return;
+        }
+
+        if (Mathf.Abs(h) < float.Epsilon) {
+            SwitchMovementState(PlayerMovementState.IDLE);
+            return;
+        }
+    }
+
+    private void ExecuteJumpingState()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        Move(new Vector2(h, 0));
+
+        if (!Input.GetButton("Jump") || m_playerBody.Velocity.y < 0)
+            SwitchMovementState(PlayerMovementState.FALLING);
+    }
+
+    private void ExecuteFallingState()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        Move(new Vector2(h, 0));
+
+        if (m_playerBody.IsGrounded) {
+            SwitchMovementState(PlayerMovementState.IDLE);
+            return;
+        }
+
+        if (((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0))) {
+            SwitchMovementState(PlayerMovementState.WALLSLIDING);
+        } else if (Input.GetButtonDown("Jump")) {
+            if (m_playerBody.TouchingLeftWall) {
+                Jump(new Vector2(m_wallJumpForce, m_jumpForce));
+                SwitchMovementState(PlayerMovementState.JUMPING);
+                return;
+            } else if (m_playerBody.TouchingRightWall) {
+                Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
+                SwitchMovementState(PlayerMovementState.JUMPING);
+                return;
+            }
+        }
+    }
+
+    private void ExecuteWallSlideState()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        Move(new Vector2(h, 0));
+
+        if (Input.GetButtonDown("Jump")) {
+            if (m_playerBody.TouchingLeftWall) {
+                Jump(new Vector2(m_wallJumpForce, m_jumpForce));
+                SwitchMovementState(PlayerMovementState.JUMPING);
+                return;
+            } else if (m_playerBody.TouchingRightWall) {
+                Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
+                SwitchMovementState(PlayerMovementState.JUMPING);
+                return;
+            }
+        }
+
+        if (m_playerBody.IsGrounded) {
+            SwitchMovementState(PlayerMovementState.IDLE);
+        } else if (!((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0))) {
+            SwitchMovementState(PlayerMovementState.FALLING);
+        }
+    }
+
+    private void SwitchMovementState(PlayerMovementState state)
+    {
+        // On state exit
+        switch (m_state) {
+            case PlayerMovementState.IDLE:
+                break;
+            case PlayerMovementState.RUNNING:
+                break;
+            case PlayerMovementState.JUMPING:
+                break;
+            case PlayerMovementState.FALLING:
+                break;
+            case PlayerMovementState.WALLSLIDING:
+                m_playerBody.MaxMoveVelocity = m_playerBody.MaxMoveVelocity.ChangeY(m_maxFallVelocity);
+                break;
+            default:
+                break;
+        }
+
+        // On state enter
+        switch (state) {
+            case PlayerMovementState.IDLE:
+                break;
+            case PlayerMovementState.RUNNING:
+                break;
+            case PlayerMovementState.JUMPING:
+                m_playerBody.GravityScale = m_jumpingGravity;
+                break;
+            case PlayerMovementState.FALLING:
+                m_playerBody.GravityScale = m_fallingGravity;
+                break;
+            case PlayerMovementState.WALLSLIDING:
+                m_playerBody.MaxMoveVelocity = m_playerBody.MaxMoveVelocity.ChangeY(m_maxWallSlideVelocity);
+                break;
+            default:
+                break;
+        }
+
+        m_state = state;
+    }
+
+    private ShotInfo GetCurrentTrickInfo()
+    {
         ShotInfo trickInfo = new ShotInfo();
         trickInfo.playerJumping = !m_playerBody.IsGrounded;
         trickInfo.playerMoving = Mathf.Abs(m_playerBody.Velocity.x) > float.Epsilon;
@@ -129,7 +271,7 @@ public class PlayerCharacter : Character
     private void SetTimeScale(float timeScale)
     {
         Time.timeScale = timeScale;
-        Time.fixedDeltaTime = timeScale * 0.02f;
+        Time.fixedDeltaTime = timeScale * m_physicsTimeStep;
     }
 
     private void Jump(Vector2 jumpForce, bool impulse = false)
@@ -139,10 +281,16 @@ public class PlayerCharacter : Character
         else
             m_playerBody.SetVelocity(jumpForce);
 
-        m_jumping = true;
         m_jumpParticles.Play();
         m_jumpSound.Play();
         m_viewController.Animator.SetTrigger("Jump");
+    }
+    protected override void Move(Vector2 direction)
+    {
+        m_playerBody.Move(direction);
+
+        if (m_viewController != null)
+            m_viewController.Move(direction);
     }
 
     public override void Destroy()
@@ -156,13 +304,5 @@ public class PlayerCharacter : Character
         SetTimeScale(1);
 
         base.Destroy();
-    }
-
-    protected override void Move(Vector2 direction)
-    {
-        m_playerBody.Move(direction);
-
-        if (m_viewController != null)
-            m_viewController.Move(direction);
     }
 }

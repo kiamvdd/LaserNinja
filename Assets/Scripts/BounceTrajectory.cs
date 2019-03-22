@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class BounceTrajectory : Trajectory
     private int m_numBounces;
     private float m_distanceTraversed = 0;
 
-    public event Utils.EmptyDelegate OnBounce;
+    public Action OnBounce;
 
     public BounceTrajectory(int numBounces, bool clampTrajectory = false, bool endOnFloor = false)
     {

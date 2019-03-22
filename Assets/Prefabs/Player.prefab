@@ -5487,14 +5487,18 @@ MonoBehaviour:
   m_maxHealth: 1
   m_movementSpeed: 10
   m_viewController: {fileID: 1058760632362744172}
+  m_playerBody: {fileID: 1248677417}
   m_jumpForce: 16
   m_wallJumpForce: 16
-  m_gun: {fileID: 202198266}
-  m_playerBody: {fileID: 1248677417}
+  m_maxFallVelocity: 32
+  m_jumpingGravity: 3
+  m_fallingGravity: 6
+  m_maxWallSlideVelocity: 8
   m_slowmoSpeed: 0.2
   m_deathParticles: {fileID: 4364499348110900775}
   m_jumpParticles: {fileID: 1846512704}
   m_jumpSound: {fileID: 826764070273188789}
+  m_gun: {fileID: 202198266}
 --- !u!50 &6484584840102127192
 Rigidbody2D:
   serializedVersion: 4
@@ -5556,8 +5560,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_floorRayCastDistance: 0.2
   m_maxMoveVelocity: {x: 10, y: 0}
-  m_acceleration: {x: 60, y: 30}
-  m_deceleration: {x: 120, y: 0}
+  m_groundAcceleration: {x: 120, y: 0}
+  m_airAcceleration: {x: 30, y: 0}
+  m_groundAutoDeceleration: {x: 60, y: 0}
+  m_airAutoDeceleration: {x: 10, y: 0}
+  m_groundDirectionChangeDeceleration: {x: 60, y: 0}
+  m_airDirectionChangeDeceleration: {x: 60, y: 0}
   m_body: {fileID: 6484584840102127192}
   m_groundTestOrigins:
   - {fileID: 3460873449086223520}

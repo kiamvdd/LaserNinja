@@ -9581,6 +9581,11 @@ PrefabInstance:
       propertyPath: m_nextSceneIndex
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3972900019047113250, guid: ac87828e2dc175443a7b6f117b22755b,
+        type: 3}
+      propertyPath: m_startTime
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3972900020217788071, guid: ac87828e2dc175443a7b6f117b22755b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9945,6 +9950,24 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6484584840102127189, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_maxWallSlideVelocity
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6484584840102127189, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_wallJumpForce
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1248677417, guid: 2ee8390b761ce8b45a4294d8d12e222f, type: 3}
+      propertyPath: m_deceleration.x
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1248677417, guid: 2ee8390b761ce8b45a4294d8d12e222f, type: 3}
+      propertyPath: m_maxMoveVelocity.x
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ee8390b761ce8b45a4294d8d12e222f, type: 3}

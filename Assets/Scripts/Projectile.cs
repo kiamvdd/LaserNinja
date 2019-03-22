@@ -38,7 +38,7 @@ public abstract class Projectile : MonoBehaviour
         if (!m_initialized)
             return;
 
-        float rot_z = Utils.VectorToAngle2D(m_currentDirection);
+        float rot_z = Helpers.Util.VectorToAngle2D(m_currentDirection);
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z);
     }
 

@@ -23,7 +23,7 @@ public class View : MonoBehaviour
 
         LookDirection = lookDir;
 
-        float rot_z = Utils.VectorToAngle2D(lookDir);
+        float rot_z = Helpers.Util.VectorToAngle2D(lookDir);
         m_handPivot.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
 
         Vector3 scale = m_spriteTransform.localScale;

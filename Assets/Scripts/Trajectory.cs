@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Trajectory : MonoBehaviour
+public abstract class Trajectory
 {
     /// <summary>
     /// Will recalculate the trajectory using position, velocity, and other values passed at trajectory creation.
