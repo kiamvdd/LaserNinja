@@ -20,6 +20,9 @@ public class LevelTimer : MonoBehaviour
     private GameObject m_anyKeyText;
 
     [SerializeField]
+    private TrickList m_trickList;
+
+    [SerializeField]
     private PlayerCharacter m_player;
 
     [SerializeField]
@@ -36,7 +39,6 @@ public class LevelTimer : MonoBehaviour
 
     private void Awake()
     {
-        EventBus.OnEnemyKilled += OnEnemyKilled;
         m_timer = m_startTime;
         TimeSpan ts = TimeSpan.FromSeconds(m_timer);
         m_text.text = ts.ToString(@"mm\:ss\:ff");
@@ -54,7 +56,6 @@ public class LevelTimer : MonoBehaviour
 
             if (m_nextSceneIndex != -1)
                 StartCoroutine(LoadSceneAfterSeconds(m_nextSceneIndex, 2));
-
         } else {
             m_timer = 0;
             m_text.enabled = false;
@@ -99,28 +100,16 @@ public class LevelTimer : MonoBehaviour
         }
     }
 
+    public void AddTimeFromTrick(Trick trick)
+    {
+        AddTime(trick.TimeBonus);
+        m_trickList.AddTrick(trick);
+    }
+
     private void AddTime(float time)
     {
         m_timer += time;
         StartCoroutine(FlashTimer());
-    }
-
-    private void OnEnemyKilled(PlayerCharacter.ShotInfo shotInfo)
-    {
-        float time = shotInfo.baseDamage * 0.5f;
-
-        if (shotInfo.playerMoving)
-            time += 1;
-
-        if (shotInfo.playerMoving)
-            time += 2;
-
-        AddTime(time);
-    }
-
-    private void OnDestroy()
-    {
-        EventBus.OnEnemyKilled -= OnEnemyKilled;
     }
 
     private IEnumerator FlashTimer()

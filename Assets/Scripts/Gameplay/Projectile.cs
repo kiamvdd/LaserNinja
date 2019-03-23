@@ -22,11 +22,8 @@ public abstract class Projectile : MonoBehaviour
 
     public event ProjectileDestroyed OnDestroyed;
 
-    protected PlayerCharacter.ShotInfo m_trickInfo;
-
-    public virtual void Init(Vector3 direction, PlayerCharacter.ShotInfo trickInfo, int layerMask)
+    public virtual void Init(Vector3 direction, int layerMask)
     {
-        m_trickInfo = trickInfo;
         m_layerMask = layerMask;
         m_currentDirection = direction;
         m_initialized = true;

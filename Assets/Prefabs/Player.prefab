@@ -5564,8 +5564,8 @@ MonoBehaviour:
   m_airAcceleration: {x: 30, y: 0}
   m_groundAutoDeceleration: {x: 60, y: 0}
   m_airAutoDeceleration: {x: 10, y: 0}
-  m_groundDirectionChangeDeceleration: {x: 60, y: 0}
-  m_airDirectionChangeDeceleration: {x: 60, y: 0}
+  m_groundDirectionChangeDeceleration: {x: 0, y: 0}
+  m_airDirectionChangeDeceleration: {x: 0, y: 0}
   m_body: {fileID: 6484584840102127192}
   m_groundTestOrigins:
   - {fileID: 3460873449086223520}

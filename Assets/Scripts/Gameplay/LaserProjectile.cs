@@ -17,7 +17,7 @@ public class LaserProjectile : Projectile
     [SerializeField]
     private SoundClip m_bounceSound;
 
-    public override void Init(Vector3 direction, PlayerCharacter.ShotInfo trickInfo, int layerMask)
+    public override void Init(Vector3 direction, int layerMask)
     {
         m_trajectory = new BounceTrajectory(10, clampTrajectory: true);
         m_trajectory.CalculateTrajectory(transform.position, direction);
@@ -35,7 +35,7 @@ public class LaserProjectile : Projectile
         Vector3 pos = m_trajectory.GetCurrentPosition();
         m_lineRenderer.SetPosition(0, pos);
         m_lineRenderer.SetPosition(1, pos);
-        base.Init(direction, trickInfo, layerMask);
+        base.Init(direction, layerMask);
     }
 
     protected override void FixedUpdate()
@@ -74,10 +74,10 @@ public class LaserProjectile : Projectile
         float damage = CalculateDamage();
         damageable.TakeDamage(CalculateDamage());
 
-        m_trickInfo.baseDamage = damage;
+        //m_trickData.AddTrick("Kill", 1);
 
-        if (!damageable.IsAlive())
-            EventBus.OnEnemyKilled(m_trickInfo);
+        //if (!damageable.IsAlive())
+        //    EventBus.OnEnemyKilled(m_trickData);
 
         GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
         if (cameraControllerObj != null) {

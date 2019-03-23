@@ -29,14 +29,14 @@ public class Gun : MonoBehaviour
         m_aimingGuideLineRenderer.enabled = false;
     }
 
-    public void Fire(Vector3 direction, PlayerCharacter.ShotInfo trickInfo)
+    public void Fire(Vector3 direction)
     {
         if (!m_aiming)
             return;
 
         Projectile projectile = Instantiate(m_projectilePrefab);
         projectile.transform.position = m_barrel.position;
-        projectile.Init(direction, trickInfo, ~(1 << m_owner.gameObject.layer));
+        projectile.Init(direction, ~(1 << m_owner.gameObject.layer));
         projectile.OnDestroyed += OnProjectileDestroyed;
 
         m_animator.SetTrigger("Shoot");

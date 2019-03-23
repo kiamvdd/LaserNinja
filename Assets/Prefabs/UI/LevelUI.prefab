@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 3972900019047113250}
   - component: {fileID: 3972900019047113261}
   - component: {fileID: 3972900019047113260}
+  - component: {fileID: 7046072928934381288}
   m_Layer: 5
   m_Name: LevelTimer
   m_TagString: Untagged
@@ -129,8 +130,10 @@ MonoBehaviour:
   m_gameOverText: {fileID: 3972900020501995687}
   m_winText: {fileID: 3972900019889144783}
   m_anyKeyText: {fileID: 3972900019070527791}
+  m_trickList: {fileID: 7963479100333303752}
   m_player: {fileID: 0}
   m_music: {fileID: 0}
+  m_nextSceneIndex: -1
 --- !u!222 &3972900019047113261
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -255,6 +258,19 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7046072928934381288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3972900019047113262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a2484bacfd9d844ba3f3eecc17bff7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_levelTimer: {fileID: 3972900019047113250}
 --- !u!1 &3972900019070527791
 GameObject:
   m_ObjectHideFlags: 0

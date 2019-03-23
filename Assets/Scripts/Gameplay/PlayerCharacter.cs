@@ -45,27 +45,13 @@ public class PlayerCharacter : Character
     private Gun m_gun;
     #endregion
 
-    public class ShotInfo
-    {
-        public ShotInfo()
-        {
-            baseDamage = 0;
-            playerMoving = false;
-            playerJumping = false;
-        }
-
-        public float baseDamage;
-        public bool playerMoving;
-        public bool playerJumping;
-    }
-
     protected override void Awake()
     {
         base.Awake();
         m_physicsTimeStep = Time.fixedDeltaTime;
     }
 
-    private enum PlayerMovementState
+    public enum PlayerMovementState
     {
         IDLE,
         RUNNING,
@@ -101,7 +87,12 @@ public class PlayerCharacter : Character
         // Aiming / gun logic
 
         if (Input.GetMouseButtonDown(0)) {
-            m_gun.Fire(m_viewController.LookDirection, GetCurrentTrickInfo());
+            //TrickInterpreter.TrickData trickData = new TrickInterpreter.TrickData();
+
+            //if (!m_playerBody.IsGrounded)
+            //    trickData.AddTrick("Aerial", 1);
+
+            m_gun.Fire(m_viewController.LookDirection);
         }
 
         if (Input.GetMouseButtonDown(1)) {
@@ -257,15 +248,6 @@ public class PlayerCharacter : Character
         }
 
         m_state = state;
-    }
-
-    private ShotInfo GetCurrentTrickInfo()
-    {
-        ShotInfo trickInfo = new ShotInfo();
-        trickInfo.playerJumping = !m_playerBody.IsGrounded;
-        trickInfo.playerMoving = Mathf.Abs(m_playerBody.Velocity.x) > float.Epsilon;
-
-        return trickInfo;
     }
 
     private void SetTimeScale(float timeScale)
