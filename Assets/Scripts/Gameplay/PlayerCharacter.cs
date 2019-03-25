@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using Helpers;
+using UnityEditor;
+
 public class PlayerCharacter : Character
 {
     #region Data members
@@ -122,8 +124,9 @@ public class PlayerCharacter : Character
             return;
         }
 
-        if (Input.GetButtonDown("Jump")) {
+        if (Input.GetButton("Jump")) {
             Jump(new Vector2(0, m_jumpForce), true);
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERJUMP));
             SwitchMovementState(PlayerMovementState.JUMPING);
             return;
         }
@@ -139,8 +142,9 @@ public class PlayerCharacter : Character
             return;
         }
 
-        if (Input.GetButtonDown("Jump")) {
+        if (Input.GetButton("Jump")) {
             Jump(new Vector2(0, m_jumpForce), true);
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERJUMP));
             SwitchMovementState(PlayerMovementState.JUMPING);
             return;
         }
@@ -175,10 +179,12 @@ public class PlayerCharacter : Character
         } else if (Input.GetButtonDown("Jump")) {
             if (m_playerBody.TouchingLeftWall) {
                 Jump(new Vector2(m_wallJumpForce, m_jumpForce));
+                EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERWALLJUMP));
                 SwitchMovementState(PlayerMovementState.JUMPING);
                 return;
             } else if (m_playerBody.TouchingRightWall) {
                 Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
+                EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERWALLJUMP));
                 SwitchMovementState(PlayerMovementState.JUMPING);
                 return;
             }
@@ -193,10 +199,12 @@ public class PlayerCharacter : Character
         if (Input.GetButtonDown("Jump")) {
             if (m_playerBody.TouchingLeftWall) {
                 Jump(new Vector2(m_wallJumpForce, m_jumpForce));
+                EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERWALLJUMP));
                 SwitchMovementState(PlayerMovementState.JUMPING);
                 return;
             } else if (m_playerBody.TouchingRightWall) {
                 Jump(new Vector2(-m_wallJumpForce, m_jumpForce));
+                EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERWALLJUMP));
                 SwitchMovementState(PlayerMovementState.JUMPING);
                 return;
             }
@@ -220,6 +228,8 @@ public class PlayerCharacter : Character
             case PlayerMovementState.JUMPING:
                 break;
             case PlayerMovementState.FALLING:
+                if (state == PlayerMovementState.IDLE)
+                    EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERLAND));
                 break;
             case PlayerMovementState.WALLSLIDING:
                 m_playerBody.MaxMoveVelocity = m_playerBody.MaxMoveVelocity.ChangeY(m_maxFallVelocity);
@@ -241,6 +251,7 @@ public class PlayerCharacter : Character
                 m_playerBody.GravityScale = m_fallingGravity;
                 break;
             case PlayerMovementState.WALLSLIDING:
+                EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERWALLRIDE));
                 m_playerBody.MaxMoveVelocity = m_playerBody.MaxMoveVelocity.ChangeY(m_maxWallSlideVelocity);
                 break;
             default:

@@ -9,7 +9,7 @@ using UnityEditor;
 public class TrickParser : TrickConditional
 {
     public List<TrickConditional> m_trickConditions;
-    private int m_conditionalIndex;
+    private int m_conditionalIndex;//
 
     public TrickParser(Trick trick)
     {
@@ -46,50 +46,4 @@ public class TrickParser : TrickConditional
 
         return ConditionState.FAIL;
     }
-}
-
-[System.Serializable]
-public abstract class TrickConditional
-{
-    public enum ConditionState
-    {
-        FAIL,
-        RUNNING,
-        SUCCESS,
-    }
-
-    public abstract ConditionState TestCondition(TrickEventData eventData);
-
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool m_removeFromGUI = false;
-    public bool RemoveFromGUI { get { return m_removeFromGUI; } }
-
-    public void TagForRemoval() { m_removeFromGUI = true; }
-    public virtual void DrawConditionalGUI() { }
-#endif
-}
-
-[System.Serializable]
-public class TrickTypeEquals : TrickConditional
-{
-    public TrickEventData.TrickEventType TrickEventType;
-    public bool Negate = false;
-    public override ConditionState TestCondition(TrickEventData eventData)
-    {
-        if (Negate)
-            return (eventData.Type != TrickEventType ? ConditionState.SUCCESS : ConditionState.FAIL);
-        else
-            return (eventData.Type == TrickEventType ? ConditionState.SUCCESS : ConditionState.FAIL);
-    }
-
-#if UNITY_EDITOR
-    public override void DrawConditionalGUI()
-    {
-        base.DrawConditionalGUI();
-        EditorGUILayout.BeginHorizontal();
-        TrickEventType = (TrickEventData.TrickEventType)EditorGUILayout.EnumPopup(TrickEventType);
-        EditorGUILayout.EndHorizontal();
-    }
-#endif
 }

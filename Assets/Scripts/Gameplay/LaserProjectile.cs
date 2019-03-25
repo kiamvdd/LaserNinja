@@ -72,12 +72,8 @@ public class LaserProjectile : Projectile
     private void ApplyDamage(IDamageable damageable)
     {
         float damage = CalculateDamage();
-        damageable.TakeDamage(CalculateDamage());
-
-        //m_trickData.AddTrick("Kill", 1);
-
-        //if (!damageable.IsAlive())
-        //    EventBus.OnEnemyKilled(m_trickData);
+        if (damageable.TakeDamage(CalculateDamage()) <= 0)
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.KILL));
 
         GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
         if (cameraControllerObj != null) {

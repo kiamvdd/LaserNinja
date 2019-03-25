@@ -1404,7 +1404,7 @@ PrefabInstance:
     - target: {fileID: 3972900019047113250, guid: ac87828e2dc175443a7b6f117b22755b,
         type: 3}
       propertyPath: m_startTime
-      value: 5
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 3972900020217788071, guid: ac87828e2dc175443a7b6f117b22755b,
         type: 3}
@@ -10278,6 +10278,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6484584840102127189, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: fuckYou
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6484584840102127189, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_Flags
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3460873449086223520, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.36833
+      objectReference: {fileID: 0}
+    - target: {fileID: 3460873449086223520, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789158923856645713, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.27133
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789158923856645713, guid: 2ee8390b761ce8b45a4294d8d12e222f,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9125
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ee8390b761ce8b45a4294d8d12e222f, type: 3}

@@ -13,6 +13,11 @@ public class TrickInterpreter : MonoBehaviour
 
     private RingBuffer<TrickEventData> m_trickEvents = new RingBuffer<TrickEventData>(100);
 
+    private void Awake()
+    {
+        EventBus.OnTrickEvent += OnTrickEvent;
+    }
+
     private void OnTrickEvent(TrickEventData eventData)
     {
         m_trickEvents.Add(eventData);
@@ -50,16 +55,25 @@ public class TrickInterpreter : MonoBehaviour
             } while (state != TrickConditional.ConditionState.FAIL && eventIndex >= 0);
         }
     }
+
+    private void OnDestroy()
+    {
+        EventBus.OnTrickEvent -= OnTrickEvent;
+    }
 }
 
 public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEventData>
 {
+    [Flags]
     public enum TrickEventType
     {
-        WALLRIDE,
-        JUMP,
-        LAND,
-        KILL,
+        NONE = 0,
+        PLAYERWALLRIDE = 1 << 0,
+        PLAYERJUMP = 1 << 1,
+        PLAYERWALLJUMP = 1 << 2,
+        PLAYERLAND = 1 << 3,
+        KILL = 1 << 4,
+        CLOSECALL = 1 << 4,
     }
 
     private TrickEventType m_type;
@@ -90,8 +104,6 @@ public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEvent
         return (other.Type == m_type) && (other.TimeStamp == m_timeStamp);
     }
 }
-
-
 
 public class TrickEventDataComparer : EqualityComparer<TrickEventData>
 {

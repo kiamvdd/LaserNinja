@@ -45,9 +45,9 @@ public class SlimeController : Character
         Move(new Vector2(h, 0));
     }
 
-    public override void TakeDamage(float amount)
+    public override float TakeDamage(float amount)
     {
-        base.TakeDamage(amount);
+        return base.TakeDamage(amount);
     }
 
     public override void Destroy()

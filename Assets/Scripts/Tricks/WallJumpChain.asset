@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ef7585ae736534db7701cf48811a5d, type: 3}
+  m_Name: WallJumpChain
+  m_EditorClassIdentifier: 
+  m_trickConditions:
+  - {fileID: 11400000, guid: a96af2df5d95424458a72ca772bb3aaf, type: 2}
+  - {fileID: 11400000, guid: 60057ad4174357c4a93510cd33156d6e, type: 2}
+  - {fileID: 11400000, guid: a96af2df5d95424458a72ca772bb3aaf, type: 2}
+  - {fileID: 11400000, guid: 60057ad4174357c4a93510cd33156d6e, type: 2}
+  - {fileID: 11400000, guid: a96af2df5d95424458a72ca772bb3aaf, type: 2}
+  - {fileID: 11400000, guid: 60057ad4174357c4a93510cd33156d6e, type: 2}
+  m_timeBonus: 3
+  m_name: Walljump x3

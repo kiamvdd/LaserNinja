@@ -26,13 +26,15 @@ public abstract class Character : MonoBehaviour, IDamageable
         m_viewController.LookAt(position);
     }
 
-    public virtual void TakeDamage(float amount)
+    public virtual float TakeDamage(float amount)
     {
         m_health -= amount;
-
+        
         if (m_health <= 0) {
             Destroy();
         }
+
+        return m_health;
     }
 
     public virtual void Destroy()
