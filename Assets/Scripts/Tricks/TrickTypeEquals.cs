@@ -2,21 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-[CreateAssetMenu(menuName = "LightBounce/TrickConditionals/Equals")]
-public class TrickTypeEquals : TrickConditional
+public class TrickTypeEquals : TrickCondition
 {
+    [Tooltip("The event(s) that will result in a SUCCESS.")]
     [EnumFlag]
-    public TrickEventData.TrickEventType TrickEventType;
+    public TrickEventData.TrickEventType SuccessEventType;
 
-    public bool Negate = false;
+    [Tooltip("The event(s) that will result in a FAIL.")]
+    [EnumFlag]
+    public TrickEventData.TrickEventType EventBlacklist;
+
+    [Tooltip("If true, Event Blacklist will act as a whitelist instead.")]
+    public bool InvertBlackList;
+
     public override ConditionState TestCondition(TrickEventData eventData)
     {
-        bool flagContainsEvent = (TrickEventType & eventData.Type) > 0;
+        int blacklistComparison = ((int)EventBlacklist & (int)eventData.Type);
 
-        if (Negate)
-            return (!flagContainsEvent ? ConditionState.SUCCESS : ConditionState.FAIL);
-        else
-            return (flagContainsEvent ? ConditionState.SUCCESS : ConditionState.FAIL);
+        if (InvertBlackList) {
+            if (blacklistComparison == 0)
+                return ConditionState.FAIL;
+        } else {
+            if (blacklistComparison > 0)
+                return ConditionState.FAIL;
+        }
+
+        if (((int)SuccessEventType & (int)eventData.Type) > 0)
+            return ConditionState.SUCCESS;
+
+        return ConditionState.RUNNING;
     }
 }

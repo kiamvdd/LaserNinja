@@ -8,52 +8,25 @@ public class TrickInterpreter : MonoBehaviour
     [SerializeField]
     private List<Trick> m_trickList = new List<Trick>();
 
-    [SerializeField]
-    private LevelTimer m_levelTimer;
-
-    private RingBuffer<TrickEventData> m_trickEvents = new RingBuffer<TrickEventData>(100);
-
     private void Awake()
     {
         EventBus.OnTrickEvent += OnTrickEvent;
+
+        foreach (Trick trick in m_trickList) {
+            trick.OnTrickCompleted += OnTrickCompleted;
+        }
     }
 
     private void OnTrickEvent(TrickEventData eventData)
     {
-        m_trickEvents.Add(eventData);
-        CheckForTrickCompletion();
-    }
-
-    private void OnUpdateTrickEvent(TrickEventData eventData)
-    {
-        int eventIndex = m_trickEvents.IndexOf(eventData);
-
-        if (eventIndex != -1) {
-            m_trickEvents[eventIndex].Active = true;
-        }
-    }
-
-    private void CheckForTrickCompletion()
-    {
-        if (!(m_trickEvents.Length > 0))
-            return;
-
         foreach (Trick trick in m_trickList) {
-            TrickParser trickParser = new TrickParser(trick);
-
-            int eventIndex = m_trickEvents.Length - 1;
-            TrickConditional.ConditionState state;
-
-            do {
-                state = trickParser.TestCondition(m_trickEvents[eventIndex]);
-                if (state == TrickConditional.ConditionState.SUCCESS) {
-                    m_levelTimer.AddTimeFromTrick(trick);
-                    break;
-                }
-
-                eventIndex--;
-            } while (state != TrickConditional.ConditionState.FAIL && eventIndex >= 0);
+            trick.ProcessTrickEvent(eventData);
         }
+    }
+
+    private void OnTrickCompleted(Trick trick)
+    {
+
     }
 
     private void OnDestroy()
