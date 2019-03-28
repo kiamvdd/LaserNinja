@@ -4,8 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public abstract class TrickSequenceParser : ISerializationCallbackReceiver
+public class TrickSequenceParser : ISerializationCallbackReceiver
 {
+    public enum ParserType
+    {
+        LINEAR,
+    }
+
     public enum ParserState
     {
         START,
@@ -23,14 +28,15 @@ public abstract class TrickSequenceParser : ISerializationCallbackReceiver
     protected ParserState m_state = ParserState.START;
     public ParserState State { get { return m_state; } }
 
-    public abstract TrickSequenceParser Instantiate();
-    public abstract SequenceState ProcessTrickEvent(TrickEventData eventData);
-    protected abstract void @Reset();
+    public virtual ParserType GetParserType() { throw new NotImplementedException(); }
+    public virtual TrickSequenceParser Instantiate() { throw new NotImplementedException(); }
+    public virtual SequenceState ProcessTrickEvent(TrickEventData eventData) { throw new NotImplementedException(); }
+    protected virtual void @Reset() { throw new NotImplementedException(); }
 
-    public virtual void OnBeforeSerialize() { }
-    public virtual void OnAfterDeserialize() { }
+    public virtual void OnBeforeSerialize() { return; }
+    public virtual void OnAfterDeserialize() { return; }
 
 #if UNITY_EDITOR
-    public abstract void OnInspectorGUI();
+    public virtual void OnInspectorGUI() { return; }
 #endif
 }

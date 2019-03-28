@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "LightBounce/Trick")]
-public class Trick : ScriptableObject
+public class Trick : ScriptableObject, ISerializationCallbackReceiver
 {
     private enum Concurrency
     {
@@ -24,10 +25,13 @@ public class Trick : ScriptableObject
     public float TimeBonus { get { return m_timeBonus; } }
 
     [SerializeField]
-    private TrickSequenceParser m_parserTemplate;
+    private TrickSequenceParser.ParserType m_parserType = TrickSequenceParser.ParserType.LINEAR;
+
+    [SerializeField]
+    private TrickSequenceParser m_parserTemplate = new LinearTrickParser();
     public TrickSequenceParser ParserTemplate { get { return m_parserTemplate; } }
     private List<TrickSequenceParser> m_activeParsers = new List<TrickSequenceParser>();
-
+    
     public delegate void TrickCallBack(Trick trick);
     public event TrickCallBack OnTrickCompleted;
 
@@ -50,5 +54,26 @@ public class Trick : ScriptableObject
                 OnTrickCompleted(this);
             }
         }
+    }
+
+    public void OnValidate()
+    {
+        if (m_parserTemplate == null || m_parserTemplate.GetParserType() != m_parserType) {
+            switch (m_parserType) {
+                case TrickSequenceParser.ParserType.LINEAR:
+                    m_parserTemplate = new LinearTrickParser();
+                    break;
+            }
+        }
+    }
+
+    public void OnBeforeSerialize()//
+    {
+        //Debug.Log("Serializing " + Name);
+    }
+
+    public void OnAfterDeserialize()
+    {
+        //Debug.Log("Deserializing " + Name);
     }
 }

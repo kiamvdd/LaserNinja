@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class TrickTypeEquals : TrickCondition
@@ -32,4 +33,26 @@ public class TrickTypeEquals : TrickCondition
 
         return ConditionState.RUNNING;
     }
+#if UNITY_EDITOR
+    private string blacklistLabel = "Event Blacklist";
+    private string whitelistLabel = "Event Whitelist";
+    public override void OnInspectorGUI()
+    {
+        EditorGUILayout.BeginVertical(GUI.skin.box);
+        SuccessEventType = (TrickEventData.TrickEventType)EditorGUILayout.EnumFlagsField("Success Event", SuccessEventType);
+        EventBlacklist = (TrickEventData.TrickEventType)EditorGUILayout.EnumFlagsField(InvertBlackList ? whitelistLabel : blacklistLabel, EventBlacklist);
+        InvertBlackList = EditorGUILayout.Toggle("Use Whitelist", InvertBlackList);
+        EditorGUILayout.EndVertical();
+    }
+
+    public override void OnBeforeSerialize()
+    {
+        Debug.Log("Serializing");
+    }
+
+    public override void OnAfterDeserialize()
+    {
+        Debug.Log("Deserializing");
+    }
+#endif
 }

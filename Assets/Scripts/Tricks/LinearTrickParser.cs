@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Will find a series of events with
+[Serializable]
 public class LinearTrickParser : TrickSequenceParser
 {
     [SerializeField]
-    private TrickCondition[] m_conditions = new TrickCondition[0];
-    public TrickCondition[] Conditions { get { return m_conditions; } }
+    private List<TrickCondition> m_conditions = new List<TrickCondition>();
+    public List<TrickCondition> Conditions { get { return m_conditions; } }
     private Queue<TrickCondition> m_activeConditions;
 
     //[Serializable]
@@ -27,13 +28,14 @@ public class LinearTrickParser : TrickSequenceParser
     //[SerializeField]
     //private LinearTrickParserMemo m_trickParserMemo = null;
 
+    public LinearTrickParser()
+    {
+        m_conditions = new List<TrickCondition>();
+    }
+
     private LinearTrickParser(LinearTrickParser parser)
     {
-        m_conditions = new TrickCondition[parser.m_conditions.Length];
-        for (int i = 0; i < m_conditions.Length; i++) {
-            m_conditions[i] = parser.m_conditions[i];
-        }
-
+        m_conditions = new List<TrickCondition>(parser.Conditions);
         Reset();
     }
 
@@ -83,33 +85,38 @@ public class LinearTrickParser : TrickSequenceParser
     protected override void @Reset()
     {
         m_activeConditions = new Queue<TrickCondition>();
-        for (int i = 0; i < m_conditions.Length; i++) {
+        for (int i = 0; i < m_conditions.Count; i++) {
             m_activeConditions.Enqueue(m_conditions[i]);
         }
 
         m_state = ParserState.START;
     }
 
+    public override ParserType GetParserType()
+    {
+        return ParserType.LINEAR;
+    }
+
+    public override void OnBeforeSerialize()
+    {
+        Debug.Log("Serializing linear parser");
+    }
+
+    public override void OnAfterDeserialize()
+    {
+        Debug.Log("Deserializing linear parser");
+    }
+
 #if UNITY_EDITOR
     public override void OnInspectorGUI()
     {
+        if (GUILayout.Button("Add Equals Condition"))
+            m_conditions.Add(new TrickTypeEquals());
+
         foreach (TrickCondition condition in m_conditions) {
-            // draw shit idfk
+            condition.OnInspectorGUI();
         }
-    }   
+    }
+
 #endif
-
-    #region Serialization
-    //public override void OnBeforeSerialize()
-    //{
-    //    m_trickParserMemo = new LinearTrickParserMemo(this);
-    //}
-
-    //public override void OnAfterDeserialize()
-    //{
-    //    if (m_trickParserMemo != null) {
-    //        m_conditions = new List<TrickCondition>(m_trickParserMemo.Conditions);
-    //    }
-    //}
-    #endregion
 }
