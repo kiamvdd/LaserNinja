@@ -19,9 +19,10 @@ public class TrickInterpreter : MonoBehaviour
 
     private void OnTrickEvent(TrickEventData eventData)
     {
-        foreach (Trick trick in m_trickList) {
-            trick.ProcessTrickEvent(eventData);
-        }
+
+        //foreach (Trick trick in m_trickList) {
+        //    trick.ProcessTrickEvent(eventData);
+        //}
     }
 
     private void OnTrickCompleted(Trick trick)

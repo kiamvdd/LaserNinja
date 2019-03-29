@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 
 public class CharacterBody2D : MonoBehaviour
 {
@@ -44,7 +45,7 @@ public class CharacterBody2D : MonoBehaviour
     private Vector2 m_lastAcceleration = Vector2.zero;
 
     [SerializeField]
-    private Rigidbody2D m_body;
+    protected Rigidbody2D m_body;
 
     [SerializeField]
     private Transform[] m_groundTestOrigins;
@@ -64,32 +65,37 @@ public class CharacterBody2D : MonoBehaviour
         if ((m_lastAcceleration.y > 0 && m_body.velocity.y < 0) || (m_lastAcceleration.y < 0 && m_body.velocity.y > 0))
             changeMultiplier.y = 1;
 
+
         m_lastAcceleration = direction * (IsGrounded ? GroundAcceleration : AirAcceleration) + direction * changeMultiplier * (IsGrounded ? GroundDirectionChangeDeceleration : AirDirectionChangeDeceleration);
-        m_body.AddForce(m_lastAcceleration);
-
-
-        ClampVelocity();
     }
 
-    private void Update()
+    protected virtual void FixedUpdate()
+    {
+        m_body.AddForce(m_lastAcceleration);
+        ClampVelocity();
+        Decelerate();
+        TestForGround();
+    }
+
+    private void Decelerate()
     {
         Vector3 velocity = m_body.velocity;
 
         if (IsGrounded) {
             if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
-                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, GroundAutoDeceleration.x * Time.deltaTime);
-            }
-
-            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) { 
-                velocity.y = Mathf.MoveTowards(velocity.y, 0, GroundAutoDeceleration.y * Time.deltaTime);
-            }
-        } else {
-            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
-                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, AirAutoDeceleration.x * Time.deltaTime);
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, GroundAutoDeceleration.x * Time.fixedDeltaTime);
             }
 
             if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
-                velocity.y = Mathf.MoveTowards(velocity.y, 0, AirAutoDeceleration.y * Time.deltaTime);
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, GroundAutoDeceleration.y * Time.fixedDeltaTime);
+            }
+        } else {
+            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, AirAutoDeceleration.x * Time.fixedDeltaTime);
+            }
+
+            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, AirAutoDeceleration.y * Time.fixedDeltaTime);
             }
         }
 
@@ -104,12 +110,6 @@ public class CharacterBody2D : MonoBehaviour
     public void SetVelocity(Vector2 velocity)
     {
         m_body.velocity = velocity;
-    }
-
-    protected virtual void FixedUpdate()
-    {
-        ClampVelocity();
-        TestForGround();
     }
 
     private void ClampVelocity()

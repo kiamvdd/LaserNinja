@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class FramerateLocker : MonoBehaviour
 {
-    void Awake()
+    public int TargetFramerate = 60;
+    void Update()
     {
-        Application.targetFrameRate = 48;
+        Application.targetFrameRate = TargetFramerate;
     }
 }
