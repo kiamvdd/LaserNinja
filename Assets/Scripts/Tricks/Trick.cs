@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Newtonsoft.Json;
 
 [CreateAssetMenu(menuName = "LightBounce/Trick")]
+[Serializable]
 public class Trick : ScriptableObject, ISerializationCallbackReceiver
 {
     private enum Concurrency
@@ -31,7 +33,10 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
     private TrickSequenceParser m_parserTemplate = new LinearTrickParser();
     public TrickSequenceParser ParserTemplate { get { return m_parserTemplate; } }
     private List<TrickSequenceParser> m_activeParsers = new List<TrickSequenceParser>();
-    
+
+    [SerializeField]
+    private string m_parserJSON = "";
+
     public delegate void TrickCallBack(Trick trick);
     public event TrickCallBack OnTrickCompleted;
 
@@ -67,13 +72,15 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
         }
     }
 
-    public void OnBeforeSerialize()//
+    public void OnBeforeSerialize()
     {
-        //Debug.Log("Serializing " + Name);
+        JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+        m_parserJSON = JsonConvert.SerializeObject(m_parserTemplate, settings);
     }
 
     public void OnAfterDeserialize()
     {
-        //Debug.Log("Deserializing " + Name);
+        JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+        m_parserTemplate = JsonConvert.DeserializeObject<TrickSequenceParser>(m_parserJSON, settings);//
     }
 }

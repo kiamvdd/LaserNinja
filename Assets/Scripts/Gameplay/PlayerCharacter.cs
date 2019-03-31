@@ -89,11 +89,6 @@ public class PlayerCharacter : Character
         // Aiming / gun logic
 
         if (Input.GetMouseButtonDown(0)) {
-            //TrickInterpreter.TrickData trickData = new TrickInterpreter.TrickData();
-
-            //if (!m_playerBody.IsGrounded)
-            //    trickData.AddTrick("Aerial", 1);
-
             m_gun.Fire(m_viewController.LookDirection);
         }
 

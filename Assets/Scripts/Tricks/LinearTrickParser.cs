@@ -97,16 +97,6 @@ public class LinearTrickParser : TrickSequenceParser
         return ParserType.LINEAR;
     }
 
-    public override void OnBeforeSerialize()
-    {
-        Debug.Log("Serializing linear parser");
-    }
-
-    public override void OnAfterDeserialize()
-    {
-        Debug.Log("Deserializing linear parser");
-    }
-
 #if UNITY_EDITOR
     public override void OnInspectorGUI()
     {

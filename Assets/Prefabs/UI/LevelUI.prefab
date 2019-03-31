@@ -270,10 +270,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18a2484bacfd9d844ba3f3eecc17bff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_trickList:
-  - {fileID: 11400000, guid: 4ae1a60ef8d4a2049a3a43206f5868e6, type: 2}
-  - {fileID: 11400000, guid: 70884a7775d69694d8e4e1c6725e6fef, type: 2}
-  m_levelTimer: {fileID: 3972900019047113250}
+  m_tricks:
+  - {fileID: 11400000, guid: 273fae1685884684780ff525a0867339, type: 2}
+  m_trickListUI: {fileID: 7963479100333303752}
 --- !u!1 &3972900019070527791
 GameObject:
   m_ObjectHideFlags: 0
