@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public abstract class TrickCondition : ISerializationCallbackReceiver
+public abstract class TrickCondition
 {
     public enum ConditionState
     {
@@ -15,10 +15,8 @@ public abstract class TrickCondition : ISerializationCallbackReceiver
 
     public abstract ConditionState TestCondition(TrickEventData trickEvent);
 
-    public abstract void OnBeforeSerialize();
-    public abstract void OnAfterDeserialize();
-
 #if UNITY_EDITOR
     public abstract void OnInspectorGUI();
+    public abstract string GetInspectorHeaderName();
 #endif
 }

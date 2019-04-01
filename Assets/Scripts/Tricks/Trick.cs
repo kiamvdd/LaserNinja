@@ -43,6 +43,7 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
     public void ProcessTrickEvent(TrickEventData eventData)
     {
         if (m_activeParsers.Count == 0 || m_concurrencyType == Concurrency.UNLIMITED) {
+            Debug.Log("Adding new parser for event " + eventData.Type.ToString() + " with timestamp " + eventData.TimeStamp + ". ");
             TrickSequenceParser newParser = m_parserTemplate.Instantiate();
             m_activeParsers.Add(m_parserTemplate.Instantiate());
         }
@@ -56,6 +57,7 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
             }
 
             if (sequenceState == TrickSequenceParser.SequenceState.SUCCESS) {
+                Debug.Log("Trick completed on parser [" + (i + 1) + "] on event " + eventData.Type.ToString() + " with timestamp " + eventData.TimeStamp + ". " + m_activeParsers.Count + " parsers running concurrently.");
                 OnTrickCompleted(this);
             }
         }
@@ -81,6 +83,6 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
     public void OnAfterDeserialize()
     {
         JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-        m_parserTemplate = JsonConvert.DeserializeObject<TrickSequenceParser>(m_parserJSON, settings);//
+        m_parserTemplate = JsonConvert.DeserializeObject<TrickSequenceParser>(m_parserJSON, settings);
     }
 }

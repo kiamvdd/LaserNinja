@@ -14,10 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: Walltastic!
   m_concurrencyType: 0
-  m_timeBonus: 0
+  m_timeBonus: 1
   m_parserType: 0
-  m_parserJSON: '{"$type":"LinearTrickParser, Assembly-CSharp","Conditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
-    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":4,"EventBlacklist":0,"InvertBlackList":false},{"$type":"TrickTypeEquals,
-    Assembly-CSharp","SuccessEventType":4,"EventBlacklist":8,"InvertBlackList":false},{"$type":"TrickTypeEquals,
-    Assembly-CSharp","SuccessEventType":4,"EventBlacklist":8,"InvertBlackList":false},{"$type":"TrickTypeEquals,
-    Assembly-CSharp","SuccessEventType":4,"EventBlacklist":8,"InvertBlackList":false}]},"State":0}'
+  m_parserJSON: '{"$type":"LinearTrickParser, Assembly-CSharp","RepeatAmount":6,"Conditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
+    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":4,"EventBlacklist":8,"InvertBlackList":false}]},"State":0}'

@@ -12,7 +12,7 @@ public class TrickEditor : Editor
         Trick trick = (Trick)target;
 
         EditorGUILayout.BeginVertical(GUI.skin.box);
-        trick.ParserTemplate.OnInspectorGUI();
+        trick.ParserTemplate.OnInspectorGUIBody();
         EditorGUILayout.EndVertical();
     }
 }

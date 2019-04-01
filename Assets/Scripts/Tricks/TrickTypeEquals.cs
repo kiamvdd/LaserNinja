@@ -38,21 +38,16 @@ public class TrickTypeEquals : TrickCondition
     private string whitelistLabel = "Event Whitelist";
     public override void OnInspectorGUI()
     {
-        EditorGUILayout.BeginVertical(GUI.skin.box);
+        EditorGUILayout.BeginVertical();
         SuccessEventType = (TrickEventData.TrickEventType)EditorGUILayout.EnumFlagsField("Success Event", SuccessEventType);
         EventBlacklist = (TrickEventData.TrickEventType)EditorGUILayout.EnumFlagsField(InvertBlackList ? whitelistLabel : blacklistLabel, EventBlacklist);
         InvertBlackList = EditorGUILayout.Toggle("Use Whitelist", InvertBlackList);
         EditorGUILayout.EndVertical();
     }
 
-    public override void OnBeforeSerialize()
+    public override string GetInspectorHeaderName()
     {
-        Debug.Log("Serializing");
-    }
-
-    public override void OnAfterDeserialize()
-    {
-        Debug.Log("Deserializing");
+        return "Tricktype Equals";
     }
 #endif
 }
