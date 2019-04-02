@@ -8,6 +8,8 @@ public class ReorderableListDrawer
     private List<int> m_listOrder = new List<int>();
     private List<int> m_removedItemIndices = new List<int>();
     private int m_currentItemIndex = 0;
+    public bool ShowReorderButtons = true;
+
     public void StartList(int listLength, GUIStyle style = null)
     {
         m_listOrder = new List<int>(listLength);
@@ -40,23 +42,23 @@ public class ReorderableListDrawer
 
                     EditorGUILayout.BeginHorizontal(GUILayout.Width(30));
                         EditorGUILayout.BeginVertical();
-
-                            EditorGUI.BeginDisabledGroup(m_listOrder.Count <= 1 || m_currentItemIndex <= 0);
+                            if (ShowReorderButtons) {
+                                EditorGUI.BeginDisabledGroup(m_listOrder.Count <= 1 || m_currentItemIndex <= 0);
                                 if (GUILayout.Button("▲")) {
                                     SafeSwapIndices(m_currentItemIndex, m_currentItemIndex - 1);
                                 }
-                            EditorGUI.EndDisabledGroup();
+                                EditorGUI.EndDisabledGroup();
 
-                            EditorGUI.BeginDisabledGroup(m_listOrder.Count <= 1 || m_currentItemIndex >= m_listOrder.Count - 1);
+                                EditorGUI.BeginDisabledGroup(m_listOrder.Count <= 1 || m_currentItemIndex >= m_listOrder.Count - 1);
                                 if (GUILayout.Button("▼")) {
                                     SafeSwapIndices(m_currentItemIndex, m_currentItemIndex + 1);
                                 }
-                            EditorGUI.EndDisabledGroup();
+                                EditorGUI.EndDisabledGroup();
+                            }
 
                             if (GUILayout.Button("X")) {
                                 m_removedItemIndices.Add(m_currentItemIndex);
                             }
-
                         EditorGUILayout.EndVertical();
                     EditorGUILayout.EndHorizontal();
                 EditorGUILayout.EndHorizontal();

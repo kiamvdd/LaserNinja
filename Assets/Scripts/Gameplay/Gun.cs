@@ -34,10 +34,13 @@ public class Gun : MonoBehaviour
         if (!m_aiming)
             return;
 
+        EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.SHOOT));
+
         Projectile projectile = Instantiate(m_projectilePrefab);
         projectile.transform.position = m_barrel.position;
         projectile.Init(direction, ~(1 << m_owner.gameObject.layer));
         projectile.OnDestroyed += OnProjectileDestroyed;
+
 
         m_animator.SetTrigger("Shoot");
 

@@ -14,7 +14,8 @@ public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEvent
         PLAYERWALLJUMP = 1 << 2,
         PLAYERLAND = 1 << 3,
         KILL = 1 << 4,
-        CLOSECALL = 1 << 4,
+        CLOSECALL = 1 << 5,
+        SHOOT = 1 << 6,
     }
 
     private TrickEventType m_type;
@@ -22,9 +23,7 @@ public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEvent
     private float m_timeStamp;
     public float TimeStamp { get { return m_timeStamp; } }
 
-    public bool Active { get; set; }
-
-    public TrickEventData(TrickEventType type, bool active = true)
+    public TrickEventData(TrickEventType type)
     {
         m_type = type;
         m_timeStamp = Time.realtimeSinceStartup;

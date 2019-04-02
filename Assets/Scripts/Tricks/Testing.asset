@@ -12,9 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69ef7585ae736534db7701cf48811a5d, type: 3}
   m_Name: Testing
   m_EditorClassIdentifier: 
-  m_name: Walltastic!
-  m_concurrencyType: 0
+  m_name: Aerial kill!
+  m_concurrencyType: 1
   m_timeBonus: 1
-  m_parserType: 0
-  m_parserJSON: '{"$type":"LinearTrickParser, Assembly-CSharp","RepeatAmount":6,"Conditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
-    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":4,"EventBlacklist":8,"InvertBlackList":false}]},"State":0}'
+  m_parserType: 1
+  m_parserJSON: '{"$type":"AchronologicalParser, Assembly-CSharp","AchronConditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
+    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":16,"EventBlacklist":0,"InvertBlackList":false}]},"m_achronConditionOrder":{"$type":"System.Collections.Generic.List`1[[System.Tuple`2[[AchronologicalParser+RelativeOrder,
+    Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib","$values":[{"$type":"System.Tuple`2[[AchronologicalParser+RelativeOrder,
+    Assembly-CSharp],[System.Int32, mscorlib]], mscorlib","Item1":1,"Item2":1}]},"m_waitTimeLimit":20.0,"Conditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
+    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":6,"EventBlacklist":121,"InvertBlackList":false},{"$type":"TrickTypeEquals,
+    Assembly-CSharp","SuccessEventType":64,"EventBlacklist":14,"InvertBlackList":false},{"$type":"TrickTypeEquals,
+    Assembly-CSharp","SuccessEventType":8,"EventBlacklist":6,"InvertBlackList":false}]},"RepeatAmount":1,"State":0}'
+  m_debugParserJSON: '{"$type":"AchronologicalParser, Assembly-CSharp","m_achronConditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
+    Assembly-CSharp]], mscorlib","$values":[{"$type":"TrickTypeEquals, Assembly-CSharp","SuccessEventType":0,"EventBlacklist":0,"InvertBlackList":false},{"$type":"DebugTrickCondition,
+    Assembly-CSharp","ReturnValue":true}]},"m_achronConditionOrder":{"$type":"System.Collections.Generic.List`1[[System.Tuple`2[[AchronologicalParser+RelativeOrder,
+    Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib","$values":[]},"m_waitTimeLimit":20.0,"Conditions":{"$type":"System.Collections.Generic.List`1[[TrickCondition,
+    Assembly-CSharp]], mscorlib","$values":[{"$type":"DebugTrickCondition, Assembly-CSharp","ReturnValue":true}]},"RepeatAmount":1,"State":0}'

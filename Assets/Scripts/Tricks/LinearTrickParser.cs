@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -6,26 +7,23 @@ using UnityEditor;
 using UnityEngine;
 
 // Will find a series of events with
-[Serializable]
 public class LinearTrickParser : TrickSequenceParser
 {
-    [SerializeField]
-    private List<TrickCondition> m_conditions = new List<TrickCondition>();
-    public List<TrickCondition> Conditions { get { return m_conditions; } }
+    public List<TrickCondition> Conditions = new List<TrickCondition>();
     private Queue<TrickCondition> m_activeConditions;
+    protected List<float> m_successTimeStamps = new List<float>();
+    protected int m_successCount = 0;
 
-    private int m_successCount = 0;
-
-    private StringBuilder m_debugSB = new StringBuilder();
+    private StringBuilder m_debugSB = new StringBuilder();//
 
     public LinearTrickParser()
     {
-        m_conditions = new List<TrickCondition>();
+        Conditions = new List<TrickCondition>();
     }
 
     private LinearTrickParser(LinearTrickParser parser)
     {
-        m_conditions = new List<TrickCondition>(parser.Conditions);
+        Conditions = new List<TrickCondition>(parser.Conditions);
         RepeatAmount = parser.RepeatAmount;
         Reset();
     }
@@ -55,6 +53,7 @@ public class LinearTrickParser : TrickSequenceParser
                 color = "<color=blue>";
                 break;
             case TrickCondition.ConditionState.SUCCESS:
+                m_successTimeStamps.Add(eventData.TimeStamp);
                 color = "<color=green>";
                 break;
         }
@@ -69,6 +68,8 @@ public class LinearTrickParser : TrickSequenceParser
                     ProcessTrickEvent(eventData, true);
                 } else {
                     m_debugSB.AppendLine("<color=red>Parser exiting.</color>");
+                    Debug.Log(m_debugSB.ToString());
+                    m_debugSB.AppendLine("<color=red>IF THIS SHOWS, THE PARSER HAS NOT EXITED CORRECTLY.</color>");
                     m_state = ParserState.EXIT;
                     return SequenceState.FAIL;
                 }
@@ -84,10 +85,7 @@ public class LinearTrickParser : TrickSequenceParser
                     if (m_successCount == RepeatAmount) {
                         m_debugSB.AppendLine("<color=green>Sequence completed on iteration " + m_successCount + ". Parser exiting.</color>");
                         Debug.Log(m_debugSB.ToString());
-
-                        for (int i = 0; i < 10; i++) {
-                            m_debugSB.AppendLine("<color=red>IF THIS SHOWS, THE PARSER HAS NOT EXITED CORRECTLY.</color>");
-                        }
+                        m_debugSB.AppendLine("<color=red>IF THIS SHOWS, THE PARSER HAS NOT EXITED CORRECTLY.</color>");
 
                         m_state = ParserState.EXIT;
                         return SequenceState.SUCCESS;
@@ -110,9 +108,11 @@ public class LinearTrickParser : TrickSequenceParser
     protected override void Reset()
     {
         m_activeConditions = new Queue<TrickCondition>();
-        for (int i = 0; i < m_conditions.Count; i++) {
-            m_activeConditions.Enqueue(m_conditions[i]);
+        for (int i = 0; i < Conditions.Count; i++) {
+            m_activeConditions.Enqueue(Conditions[i]);
         }
+
+        m_successTimeStamps = new List<float>();
 
         m_state = ParserState.START;
     }
@@ -128,32 +128,32 @@ public class LinearTrickParser : TrickSequenceParser
         base.OnInspectorGUIBody();
 
         if (GUILayout.Button("Add Equals Condition"))
-            m_conditions.Add(new TrickTypeEquals());
+            Conditions.Add(new TrickTypeEquals());
 
         if (GUILayout.Button("Add Debug Condition"))
-            m_conditions.Add(new DebugTrickCondition());
+            Conditions.Add(new DebugTrickCondition());
 
         ReorderableListDrawer listDrawer = new ReorderableListDrawer();
 
-        listDrawer.StartList(m_conditions.Count, GUIStyle.none);
-            for (int i = 0; i < m_conditions.Count; i++) {
-                listDrawer.StartItemDraw(i, m_conditions[i].GetInspectorHeaderName());
-                    m_conditions[i].OnInspectorGUI();
+        listDrawer.StartList(Conditions.Count, GUIStyle.none);
+            for (int i = 0; i < Conditions.Count; i++) {
+                listDrawer.StartItemDraw(i, i + ". " + Conditions[i].GetInspectorHeaderName());
+                    Conditions[i].OnInspectorGUI();
                 listDrawer.EndItemDraw();
             }
         listDrawer.EndList();
 
         var removedIndices = listDrawer.GetRemovedIndices();
-        for (int i = m_conditions.Count - 1; i >= 0; i--) {
+        for (int i = Conditions.Count - 1; i >= 0; i--) {
             if (removedIndices.Contains(i)) {
-                m_conditions.RemoveAt(i);
+                Conditions.RemoveAt(i);
             }
         }
 
         var indexOrder = listDrawer.GetFinalListOrder();
-        List<TrickCondition> tempConditions = new List<TrickCondition>(m_conditions);
-        for (int i = 0; i < m_conditions.Count; i++) {
-            m_conditions[i] = tempConditions[indexOrder[i]];
+        List<TrickCondition> tempConditions = new List<TrickCondition>(Conditions);
+        for (int i = 0; i < Conditions.Count; i++) {
+            Conditions[i] = tempConditions[indexOrder[i]];
         }
     }
 #endif

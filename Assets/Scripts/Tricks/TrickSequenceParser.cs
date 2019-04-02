@@ -12,6 +12,7 @@ public abstract class TrickSequenceParser
     public enum ParserType
     {
         LINEAR,
+        ACHRONOLOGICAL
     }
 
     public enum ParserState

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelTimer : MonoBehaviour
 {
+    #region Members
     [SerializeField]
     private float m_startTime = 10;
 
@@ -36,6 +37,7 @@ public class LevelTimer : MonoBehaviour
 
     [SerializeField]
     private int m_nextSceneIndex = -1;
+    #endregion
 
     private void Awake()
     {
@@ -73,7 +75,7 @@ public class LevelTimer : MonoBehaviour
     private void Update()
     {
         if (!m_timerActive) {
-            if (Input.anyKeyDown) {
+            if (Input.anyKey) {
                 m_timerActive = true;
                 m_anyKeyText.SetActive(false);
                 m_music.Play();
