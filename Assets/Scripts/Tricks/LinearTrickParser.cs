@@ -38,9 +38,18 @@ public class LinearTrickParser : TrickSequenceParser
         return ProcessTrickEvent(eventData, false);
     }
 
+    public override void ForcePrintDebugLog()
+    {
+        Debug.Log(m_debugSB.ToString());
+    }
+
     // Resetcheck is true when processtrickevent is called to test a failed eventdata on the first condition in the list
     private SequenceState ProcessTrickEvent(TrickEventData eventData, bool resetCheck)
     {
+        if (eventData.Type == TrickEventData.TrickEventType.KILL) {
+            Debug.Log("Kill event received");
+        }
+
         m_debugSB.AppendLine("Parser receiving " + eventData.Type.ToString() + (resetCheck ? " from reset check" : "") + ", state is " + m_state.ToString());
         TrickCondition currentCondition = m_activeConditions.Peek();
         TrickCondition.ConditionState conditionState = currentCondition.TestCondition(eventData);
@@ -65,7 +74,7 @@ public class LinearTrickParser : TrickSequenceParser
                 if (m_state == ParserState.RUNNING && !resetCheck) {
                     m_debugSB.AppendLine("<color=red>Parser resetting to process event with first condition</color>");
                     Reset();
-                    ProcessTrickEvent(eventData, true);
+                    return ProcessTrickEvent(eventData, true);
                 } else {
                     m_debugSB.AppendLine("<color=red>Parser exiting.</color>");
                     Debug.Log(m_debugSB.ToString());
@@ -73,7 +82,6 @@ public class LinearTrickParser : TrickSequenceParser
                     m_state = ParserState.EXIT;
                     return SequenceState.FAIL;
                 }
-                break;
             case TrickCondition.ConditionState.RUNNING:
                 m_debugSB.AppendLine("<color=blue>Parser continuing.</color>");
                 m_state = ParserState.RUNNING;
@@ -102,6 +110,8 @@ public class LinearTrickParser : TrickSequenceParser
                 }
         }
 
+        Debug.Log("<color=red>Parser exited unexpectedly.</color>");
+        Debug.Log(m_debugSB.ToString());
         return SequenceState.FAIL;
     }
 

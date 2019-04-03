@@ -45,17 +45,24 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
 
     public void ProcessTrickEvent(TrickEventData eventData)
     {
+        // jump received
+        // if no parsers or concurrency == unlimited, add new parser
         if (m_activeParsers.Count == 0 || m_concurrencyType == Concurrency.UNLIMITED) {
+            // copy template values into new instance
             TrickSequenceParser newParser = m_parserTemplate.Instantiate();
-            m_activeParsers.Add(m_parserTemplate.Instantiate());
+            // add to active parser list
+            m_activeParsers.Add(newParser);
         }
 
         // One event should only cause one callback so once a parser has completed, 
         // if any other parsers complete on the same event they get removed
         // this might need a refactor eventually
 
+        // for each active parser
         for (int i = m_activeParsers.Count - 1; i >= 0; i--) {
+            // send jump to parser
             TrickSequenceParser.SequenceState sequenceState = m_activeParsers[i].ProcessTrickEvent(eventData);
+            // parser state is set in ProcessTrickEvent
             TrickSequenceParser.ParserState parserState = m_activeParsers[i].State;
 
             if (parserState == TrickSequenceParser.ParserState.EXIT || sequenceState == TrickSequenceParser.SequenceState.FAIL) {
@@ -66,6 +73,13 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
                 Debug.Log("Trick completed on parser [" + (i + 1) + "] on event " + eventData.Type.ToString() + " with timestamp " + eventData.TimeStamp + ". " + m_activeParsers.Count + " parsers running concurrently.");
                 OnTrickCompleted(this);
             }
+        }
+    }
+
+    public void ForcePrintDebugLogs()
+    {
+        foreach (TrickSequenceParser parser in m_activeParsers) {
+            parser.ForcePrintDebugLog();
         }
     }
 

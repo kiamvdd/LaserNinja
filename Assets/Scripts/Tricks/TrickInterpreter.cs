@@ -20,22 +20,23 @@ public class TrickInterpreter : MonoBehaviour
         }
     }
 
-    private RingBuffer<TrickEventData> m_eventDataBuffer = new RingBuffer<TrickEventData>(4);
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.O)) {
+            Debug.Log("<color=red>START OF DEBUG LOG STREAM</color>");
+            foreach (Trick trick in m_tricks) {
+                trick.ForcePrintDebugLogs();
+            }
+            Debug.Log("<color=red>END OF DEBUG LOG STREAM</color>");
+        }
+    }
+
     private void OnTrickEvent(TrickEventData eventData)
     {
-        m_eventDataBuffer.Add(eventData);
-
-        for (int i = 0; i < m_eventDataBuffer.Length; i++) {
-            for (int j = 0; j < m_eventDataBuffer.Length; j++) {
-                if (j == i)
-                    continue;
-
-                if (m_eventDataBuffer[j].TimeStamp == m_eventDataBuffer[i].TimeStamp)
-                    Debug.Log("<color=red>Duplicate event!</color>");
-            }
-        }
-
+        Debug.Log(eventData.Type.ToString()); 
+        // receive jump
         foreach (Trick trick in m_tricks) {
+            // pass jump to each trick
             trick.ProcessTrickEvent(eventData);
         }
     }

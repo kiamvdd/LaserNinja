@@ -108,6 +108,8 @@ public class AchronologicalParser : LinearTrickParser
             return SequenceState.RUNNING;
         }
 
+
+        Debug.Log("<color=red>Another unexpected exit</color>");
         m_state = ParserState.EXIT;
         return SequenceState.FAIL;
     }
@@ -149,7 +151,7 @@ public class AchronologicalParser : LinearTrickParser
     {
         m_sb.AppendLine("Entering achron test method, testing for " + eventData.Type.ToString());
 
-        if (Time.time - m_mainSequenceFinishTime > m_waitTimeLimit) {
+        if (m_mainSequenceFinished && Time.time - m_mainSequenceFinishTime > m_waitTimeLimit) {
             m_sb.AppendLine("Time limit exceeded, exiting with <color=red>FAIL</color>.");
             return SequenceState.FAIL;
         }

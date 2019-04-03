@@ -30,6 +30,8 @@ public abstract class TrickSequenceParser
     }
     #endregion
 
+    public abstract void ForcePrintDebugLog();
+
     protected ParserState m_state = ParserState.START;
     public ParserState State { get { return m_state; } }
     public int RepeatAmount;
