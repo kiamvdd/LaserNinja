@@ -38,6 +38,7 @@ public class AchronologicalParser : LinearTrickParser
     private AchronologicalParser(AchronologicalParser parser)
     {
         Conditions = new List<TrickCondition>(parser.Conditions);
+        TimeIntervals = new List<float>(parser.TimeIntervals);
         AchronConditions = new List<TrickCondition>(parser.AchronConditions);
         m_achronConditionOrder = new List<Tuple<RelativeOrder, int>>(parser.m_achronConditionOrder);
         RepeatAmount = parser.RepeatAmount;

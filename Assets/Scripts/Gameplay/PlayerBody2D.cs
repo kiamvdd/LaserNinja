@@ -25,7 +25,7 @@ public class PlayerBody2D : CharacterBody2D
     {
         TouchingLeftWall = false;
         foreach (Transform t in m_leftWallTestOrigins) {
-            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.left, m_wallTestDistance, (1 << LayerMask.NameToLayer("Floor")));
+            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.left, m_wallTestDistance, m_floorMask);
             if (hit.collider != null) {
                 TouchingLeftWall = true;
                 break;
@@ -34,7 +34,7 @@ public class PlayerBody2D : CharacterBody2D
 
         TouchingRightWall = false;
         foreach (Transform t in m_rightWallTestOrigins) {
-            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.right, m_wallTestDistance, (1 << LayerMask.NameToLayer("Floor")));
+            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.right, m_wallTestDistance, m_floorMask);
             if (hit.collider != null) {
                 TouchingRightWall = true;
                 break;

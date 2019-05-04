@@ -5224,9 +5224,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_floorRayCastDistance: 0.2
+  m_floorMask:
+    serializedVersion: 2
+    m_Bits: 4608
   m_maxMoveVelocity: {x: 3, y: 0}
-  m_acceleration: {x: 30, y: 0}
-  m_deceleration: {x: 60, y: 0}
+  m_groundAcceleration: {x: 30, y: 0}
+  m_airAcceleration: {x: 30, y: 0}
+  m_groundAutoDeceleration: {x: 120, y: 0}
+  m_airAutoDeceleration: {x: 60, y: 0}
+  m_groundDirectionChangeDeceleration: {x: 60, y: 0}
+  m_airDirectionChangeDeceleration: {x: 60, y: 0}
   m_body: {fileID: 5209520355115121053}
   m_groundTestOrigins:
   - {fileID: 5209520354747887059}

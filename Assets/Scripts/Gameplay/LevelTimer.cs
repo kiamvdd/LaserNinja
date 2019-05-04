@@ -79,6 +79,7 @@ public class LevelTimer : MonoBehaviour
                 m_timerActive = true;
                 m_anyKeyText.SetActive(false);
                 m_music.Play();
+                EventBus.OnTimerStart();
             }
 
             return;

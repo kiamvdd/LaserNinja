@@ -10,21 +10,27 @@ using UnityEngine;
 public class LinearTrickParser : TrickSequenceParser
 {
     public List<TrickCondition> Conditions = new List<TrickCondition>();
+    public List<float> TimeIntervals = new List<float>();
+    public float RepeatInterval = 0;
     private Queue<TrickCondition> m_activeConditions;
     protected List<float> m_successTimeStamps = new List<float>();
     protected int m_successCount = 0;
+    protected float m_repeatTimeStamp = 0;
 
     private StringBuilder m_debugSB = new StringBuilder();//
 
     public LinearTrickParser()
     {
         Conditions = new List<TrickCondition>();
+        TimeIntervals = new List<float>();
     }
 
     private LinearTrickParser(LinearTrickParser parser)
     {
         Conditions = new List<TrickCondition>(parser.Conditions);
+        TimeIntervals = new List<float>(parser.TimeIntervals);
         RepeatAmount = parser.RepeatAmount;
+        RepeatInterval = parser.RepeatInterval;
         Reset();
     }
 
@@ -62,7 +68,6 @@ public class LinearTrickParser : TrickSequenceParser
                 color = "<color=blue>";
                 break;
             case TrickCondition.ConditionState.SUCCESS:
-                m_successTimeStamps.Add(eventData.TimeStamp);
                 color = "<color=green>";
                 break;
         }
@@ -87,9 +92,39 @@ public class LinearTrickParser : TrickSequenceParser
                 m_state = ParserState.RUNNING;
                 return SequenceState.RUNNING;
             case TrickCondition.ConditionState.SUCCESS:
+                m_successTimeStamps.Add(eventData.TimeStamp);
+                int index = Conditions.Count - m_activeConditions.Count;
+                if (index > 0)
+                {
+                    if (TimeIntervals[index - 1] != 0)
+                    {
+                        float interval = m_successTimeStamps[index] - m_successTimeStamps[index - 1];
+                        if (interval > TimeIntervals[index - 1])
+                        {
+                            m_state = ParserState.EXIT;
+                            return SequenceState.FAIL;
+                        }
+                    }
+                }
+
                 m_activeConditions.Dequeue();
                 if (m_activeConditions.Count == 0) {
+
+                    if (RepeatAmount > 1 && RepeatInterval != 0)
+                    {
+                        if (m_successCount > 0)
+                        {
+                            if (eventData.TimeStamp - m_repeatTimeStamp > RepeatInterval)
+                            {
+                                m_state = ParserState.EXIT;
+                                return SequenceState.FAIL;
+                            }
+                        }
+                    }
+
                     ++m_successCount;
+                    m_repeatTimeStamp = eventData.TimeStamp;
+
                     if (m_successCount == RepeatAmount) {
                         m_debugSB.AppendLine("<color=green>Sequence completed on iteration " + m_successCount + ". Parser exiting.</color>");
                         Debug.Log(m_debugSB.ToString());
@@ -136,12 +171,30 @@ public class LinearTrickParser : TrickSequenceParser
     public override void OnInspectorGUIBody()
     {
         base.OnInspectorGUIBody();
+        OnValidate();
+
+        if (RepeatAmount > 1)
+        {
+            RepeatInterval = EditorGUILayout.FloatField("Max time between repeats", RepeatInterval);
+        }
 
         if (GUILayout.Button("Add Equals Condition"))
+        {
             Conditions.Add(new TrickTypeEquals());
+            if (Conditions.Count > 1)
+            {
+                TimeIntervals.Add(0);
+            }
+        }
 
         if (GUILayout.Button("Add Debug Condition"))
+        {
             Conditions.Add(new DebugTrickCondition());
+            if (Conditions.Count > 1)
+            {
+                TimeIntervals.Add(0);
+            }
+        }
 
         ReorderableListDrawer listDrawer = new ReorderableListDrawer();
 
@@ -150,20 +203,46 @@ public class LinearTrickParser : TrickSequenceParser
                 listDrawer.StartItemDraw(i, i + ". " + Conditions[i].GetInspectorHeaderName());
                     Conditions[i].OnInspectorGUI();
                 listDrawer.EndItemDraw();
+
+                if (Conditions.Count > 1 && i < Conditions.Count - 1)
+                {
+                    TimeIntervals[i] = EditorGUILayout.FloatField("Max interval", TimeIntervals[i]);        
+                }   
             }
         listDrawer.EndList();
 
         var removedIndices = listDrawer.GetRemovedIndices();
         for (int i = Conditions.Count - 1; i >= 0; i--) {
             if (removedIndices.Contains(i)) {
+                if (Conditions.Count > 1 && i > 0)
+                {
+                    TimeIntervals.RemoveAt(i - 1);
+                }
+
                 Conditions.RemoveAt(i);
             }
         }
 
-        var indexOrder = listDrawer.GetFinalListOrder();
-        List<TrickCondition> tempConditions = new List<TrickCondition>(Conditions);
-        for (int i = 0; i < Conditions.Count; i++) {
-            Conditions[i] = tempConditions[indexOrder[i]];
+        if (removedIndices.Count == 0)
+        {
+            var indexOrder = listDrawer.GetFinalListOrder();
+            List<TrickCondition> tempConditions = new List<TrickCondition>(Conditions);
+            for (int i = 0; i < Conditions.Count; i++) {
+                Conditions[i] = tempConditions[indexOrder[i]];
+            }
+        }
+    }
+
+    public override void OnValidate()
+    {
+        if (Conditions.Count > 1 && TimeIntervals == null || TimeIntervals.Count == 0)
+        {
+            TimeIntervals = new List<float>();
+
+            for (int i = 0; i < Conditions.Count - 1; i++)
+            {
+                TimeIntervals.Add(0);
+            }
         }
     }
 #endif

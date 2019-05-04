@@ -6,7 +6,8 @@ public class CharacterBody2D : MonoBehaviour
     [SerializeField]
     private float m_floorRayCastDistance = 1f;
 
-    private int m_groundLayerID;
+    [SerializeField]
+    protected LayerMask m_floorMask;
 
     public bool IsGrounded { get; private set; }
     public bool IsKinematic { get { return m_body.isKinematic; } set { m_body.isKinematic = value; } }
@@ -49,11 +50,6 @@ public class CharacterBody2D : MonoBehaviour
 
     [SerializeField]
     private Transform[] m_groundTestOrigins;
-
-    private void Awake()
-    {
-        m_groundLayerID = LayerMask.NameToLayer("Floor");
-    }
 
     public void Move(Vector2 direction)
     {
@@ -127,13 +123,15 @@ public class CharacterBody2D : MonoBehaviour
     private void TestForGround()
     {
         foreach (Transform t in m_groundTestOrigins) {
-            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, (1 << m_groundLayerID));
+            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, m_floorMask);
             if (hit.collider != null) {
+                transform.SetParent(hit.collider.transform);
                 IsGrounded = true;
                 return;
             }
         }
 
+        transform.SetParent(null);
         IsGrounded = false;
     }
 
@@ -143,7 +141,7 @@ public class CharacterBody2D : MonoBehaviour
         if (m_groundTestOrigins != null)
 
             foreach (Transform t in m_groundTestOrigins) {
-                RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, (1 << m_groundLayerID));
+                RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, m_floorMask);
                 Debug.DrawRay(t.position, Vector2.down * m_floorRayCastDistance);
             }
     }

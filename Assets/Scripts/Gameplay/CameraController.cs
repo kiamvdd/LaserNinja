@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float m_shakeNoise = 1;
 
-    void LateUpdate()
+    public void Tick()
     {
         if (m_target == null)
             return;

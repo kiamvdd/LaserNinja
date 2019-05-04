@@ -13,6 +13,10 @@ public class TrickEditor : Editor
 
         EditorGUILayout.BeginVertical(GUI.skin.box);
         trick.ParserTemplate.OnInspectorGUIBody();
+        if(GUI.changed)
+        {
+            EditorUtility.SetDirty(trick);
+        }
         EditorGUILayout.EndVertical();
     }
 }

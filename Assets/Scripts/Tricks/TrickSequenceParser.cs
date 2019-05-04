@@ -39,13 +39,14 @@ public abstract class TrickSequenceParser
     public abstract TrickSequenceParser Instantiate();
     public abstract SequenceState ProcessTrickEvent(TrickEventData eventData);
     protected abstract void @Reset();
+    public abstract void OnValidate();
 
 #if UNITY_EDITOR
     public virtual void OnInspectorGUIBody()
     {
         EditorGUILayout.BeginHorizontal();
         Rect labelRect = GUILayoutUtility.GetRect(new GUIContent("Repeat"), "label");
-        GUI.Label(labelRect, "Repeat");
+        GUI.Label(labelRect, "Finish");
         RepeatAmount = EditorGUILayout.IntField(RepeatAmount, GUILayout.Width(30));
 
         if (RepeatAmount < 1)

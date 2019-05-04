@@ -9,7 +9,7 @@ public class TrickInterpreter : MonoBehaviour
     private List<Trick> m_tricks = new List<Trick>();
 
     [SerializeField]
-    private TrickList m_trickListUI;
+    private LevelTimer m_levelTimer;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class TrickInterpreter : MonoBehaviour
 
     private void OnTrickCompleted(Trick trick)
     {
-        m_trickListUI.AddTrick(trick);
+        m_levelTimer.AddTimeFromTrick(trick);
     }
 
     private void OnDestroy()

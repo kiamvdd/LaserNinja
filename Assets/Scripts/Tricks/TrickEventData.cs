@@ -16,6 +16,8 @@ public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEvent
         KILL = 1 << 4,
         CLOSECALL = 1 << 5,
         SHOOT = 1 << 6,
+        KILLSHOT = 1 << 7,
+        PLAYERFALL = 1 << 8,
     }
 
     private TrickEventType m_type;

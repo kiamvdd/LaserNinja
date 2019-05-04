@@ -5559,6 +5559,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_floorRayCastDistance: 0.2
+  m_floorMask:
+    serializedVersion: 2
+    m_Bits: 4608
   m_maxMoveVelocity: {x: 10, y: 0}
   m_groundAcceleration: {x: 120, y: 0}
   m_airAcceleration: {x: 30, y: 0}

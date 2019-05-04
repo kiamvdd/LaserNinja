@@ -42,6 +42,8 @@ public class PlayerCharacter : Character
     [SerializeField]
     private SoundClip m_jumpSound;
 
+    private CameraController m_cameraController;
+
     [Header("Other")]
     [SerializeField]
     private Gun m_gun;
@@ -50,6 +52,7 @@ public class PlayerCharacter : Character
     protected override void Awake()
     {
         base.Awake();
+        m_cameraController = FindObjectOfType<CameraController>();
         m_physicsTimeStep = Time.fixedDeltaTime;
     }
 
@@ -64,7 +67,6 @@ public class PlayerCharacter : Character
 
     private void Update()
     {
-        LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
         switch (m_state) {
             case PlayerMovementState.IDLE:
@@ -86,8 +88,10 @@ public class PlayerCharacter : Character
                 break;
         }
 
-        // Aiming / gun logic
+        m_cameraController.Tick();
 
+        // Aiming / gun logic
+        LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         if (Input.GetMouseButtonDown(0)) {
             m_gun.Fire(m_viewController.LookDirection);
         }
@@ -116,6 +120,7 @@ public class PlayerCharacter : Character
 
         if (!m_playerBody.IsGrounded) {
             SwitchMovementState(PlayerMovementState.FALLING);
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERFALL));
             return;
         }
 
@@ -134,6 +139,7 @@ public class PlayerCharacter : Character
 
         if (!m_playerBody.IsGrounded) {
             SwitchMovementState(PlayerMovementState.FALLING);
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERFALL));
             return;
         }
 
@@ -209,6 +215,8 @@ public class PlayerCharacter : Character
             SwitchMovementState(PlayerMovementState.IDLE);
         } else if (!((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0))) {
             SwitchMovementState(PlayerMovementState.FALLING);
+            Debug.Log("Wall fall");
+            EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERFALL));
         }
     }
 

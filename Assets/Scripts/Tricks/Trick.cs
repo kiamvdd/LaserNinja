@@ -95,6 +95,8 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
                     break;
             }
         }
+
+        m_parserTemplate.OnValidate();
     }
 
     public void OnBeforeSerialize()
