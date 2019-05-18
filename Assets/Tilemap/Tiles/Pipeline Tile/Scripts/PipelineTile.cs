@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
 using UnityEditor;
 #endif
 
@@ -104,7 +104,7 @@ namespace UnityEngine.Tilemaps
 		}
 	}
 	
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
 	[CustomEditor(typeof(PipelineTile))]
 	public class PipelineTileEditor : Editor
 	{

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MovingPlatform : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class MovingPlatform : MonoBehaviour
     {
         TIMERSTART,
         TOUCH,
+        TRIGGER,
     }
 
     [SerializeField]
@@ -22,6 +24,8 @@ public class MovingPlatform : MonoBehaviour
     private float m_speed;
     [SerializeField]
     private Rigidbody2D m_rigidBody;
+    [SerializeField]
+    private UnityEvent m_onTargetReached;
 
     private float m_timer;
 
@@ -49,14 +53,13 @@ public class MovingPlatform : MonoBehaviour
         m_active = true;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (m_active)
         {
-            m_timer += Time.deltaTime;
+            m_timer += Time.fixedDeltaTime;
             if (m_timer >= m_cycleTime)
             {
-
                 if (m_loop)
                 {
                     Transform t = m_startPoint;
@@ -70,9 +73,13 @@ public class MovingPlatform : MonoBehaviour
                     m_timer = m_cycleTime;
                     this.enabled = false;
                 }
+
+                if (m_onTargetReached != null)
+                    m_onTargetReached.Invoke();
             }
 
-            transform.position = Vector3.Lerp(m_startPoint.position, m_endPoint.position,  m_timer / m_cycleTime);
+            transform.position = Vector3.Lerp(m_startPoint.position, m_endPoint.position, m_timer / m_cycleTime);
+            //m_rigidBody.MovePosition(Vector3.Lerp(m_startPoint.position, m_endPoint.position, m_timer / m_cycleTime));
         }
     }
 
@@ -86,5 +93,10 @@ public class MovingPlatform : MonoBehaviour
         {
             Activate();
         }
+    }
+
+    public void ActivateFromTrigger()
+    {
+        m_active = true;
     }
 }

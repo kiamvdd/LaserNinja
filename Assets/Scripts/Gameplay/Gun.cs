@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +16,11 @@ public class Gun : MonoBehaviour
 
     [SerializeField]
     private Animator m_animator;
-    private bool m_canShoot = true;
+    [SerializeField]
+    private int m_shotCount = 3;
+    public int ShotCount { get { return m_shotCount; } }
+
+    public Action<int> OnShotcountChanged;
 
     [SerializeField]
     private LineRenderer m_aimingGuideLineRenderer;
@@ -23,6 +28,7 @@ public class Gun : MonoBehaviour
     private bool m_aiming = false;
 
     private Projectile m_aimingGuideDummy = null;
+    private List<Projectile> m_activeProjectiles = new List<Projectile>();
 
     private void Awake()
     {
@@ -31,7 +37,7 @@ public class Gun : MonoBehaviour
 
     public void Fire(Vector3 direction)
     {
-        if (!m_aiming)
+        if (!m_aiming || m_shotCount == 0)
             return;
 
         EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.SHOOT));
@@ -40,9 +46,11 @@ public class Gun : MonoBehaviour
         projectile.transform.position = m_barrel.position;
         projectile.Init(direction, ~(1 << m_owner.gameObject.layer));
         projectile.OnDestroyed += OnProjectileDestroyed;
-
+        m_activeProjectiles.Add(projectile);
 
         m_animator.SetTrigger("Shoot");
+        --m_shotCount;
+        OnShotcountChanged.Invoke(-1);
 
         GameObject cameraControllerObj = GameObject.FindGameObjectWithTag("CameraController");
         if (cameraControllerObj != null) {
@@ -50,8 +58,6 @@ public class Gun : MonoBehaviour
             if (controller != null)
                 controller.StartShake(0.4f, 5, 1, 0);
         }
-
-        m_canShoot = false;
     }
 
     public void SetAimingGuideEnabled(bool enabled)
@@ -60,7 +66,7 @@ public class Gun : MonoBehaviour
         m_aimingGuideLineRenderer.enabled = enabled;
     }
 
-    public void ShowAimingGuide(Vector3 direction)
+    public void UpdateAimingDirection(Vector3 direction)
     {
         if (!m_aiming)
             return;
@@ -81,5 +87,16 @@ public class Gun : MonoBehaviour
 
     private void OnProjectileDestroyed(Projectile projectile)
     {
+        ++m_shotCount;
+        OnShotcountChanged.Invoke(1);
+        m_activeProjectiles.Remove(projectile);
+    }
+
+    private void OnDestroy()
+    {
+        foreach (Projectile projectile in m_activeProjectiles)
+        {
+            projectile.OnDestroyed -= OnProjectileDestroyed;
+        }
     }
 }

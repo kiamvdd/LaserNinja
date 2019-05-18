@@ -15,7 +15,7 @@ public abstract class TrickCondition
 
     public abstract ConditionState TestCondition(TrickEventData trickEvent);
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     public abstract void OnInspectorGUI();
     public abstract string GetInspectorHeaderName();
 #endif

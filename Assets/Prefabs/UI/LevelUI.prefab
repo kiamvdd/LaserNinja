@@ -271,10 +271,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tricks:
-  - {fileID: 11400000, guid: 273fae1685884684780ff525a0867339, type: 2}
-  - {fileID: 11400000, guid: ede3bf2410d377443a8401c4a4d4c51b, type: 2}
-  - {fileID: 11400000, guid: c67ca2627d1fd0c45a23fce51b905310, type: 2}
-  - {fileID: 11400000, guid: 72e2f4dcd32854640b25a9dea36d087f, type: 2}
+  - {fileID: 11400000, guid: be49c72c589ccc1429e1b05d2cf187d2, type: 2}
+  - {fileID: 11400000, guid: 61ce21cdaef07984bb4e540aaf51a90f, type: 2}
+  - {fileID: 11400000, guid: 2bda23f8dac88ea45b2e541a62d3d59f, type: 2}
+  - {fileID: 11400000, guid: ec110a18f7ecb0748b6c7816819c5732, type: 2}
   m_levelTimer: {fileID: 3972900019047113250}
 --- !u!1 &3972900019070527791
 GameObject:

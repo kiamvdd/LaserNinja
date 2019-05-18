@@ -51,7 +51,6 @@ public class AchronologicalParser : LinearTrickParser
         return new AchronologicalParser(this);
     }
 
-    StringBuilder m_sb;
     public override SequenceState ProcessTrickEvent(TrickEventData eventData)
     {
         SequenceState mainSequenceState = SequenceState.SUCCESS;
@@ -82,9 +81,7 @@ public class AchronologicalParser : LinearTrickParser
 
         // If this event did not cause a condition to be met in the linear list, test it on the achronological conditions
         if (succeededEventCount == m_successTimeStamps.Count) {
-            m_sb = new StringBuilder();
             SequenceState achronSequenceState = TestAchronConditions(eventData);
-            Debug.Log(m_sb.ToString());
 
             switch (achronSequenceState) {
                 case SequenceState.FAIL:
@@ -110,7 +107,6 @@ public class AchronologicalParser : LinearTrickParser
         }
 
 
-        Debug.Log("<color=red>Another unexpected exit</color>");
         m_state = ParserState.EXIT;
         return SequenceState.FAIL;
     }
@@ -150,77 +146,37 @@ public class AchronologicalParser : LinearTrickParser
 
     private SequenceState TestAchronConditions(TrickEventData eventData)
     {
-        m_sb.AppendLine("Entering achron test method, testing for " + eventData.Type.ToString());
-
         if (m_mainSequenceFinished && Time.time - m_mainSequenceFinishTime > m_waitTimeLimit) {
-            m_sb.AppendLine("Time limit exceeded, exiting with <color=red>FAIL</color>.");
             return SequenceState.FAIL;
         }
 
         if (m_mainSequenceFinished) {
-            m_sb.AppendLine("Main sequence has finished.");
 
-            m_sb.AppendLine("Iterating over active conditions.");
             for (int i = 0; i < m_activeAchronConditions.Count; i++) {
                 TrickCondition.ConditionState conditionState = m_activeAchronConditions[i].TestCondition(eventData);
-                m_sb.AppendLine("Condition [" + i + "] returned " + conditionState.ToString());
                 if (conditionState == TrickCondition.ConditionState.SUCCESS) {
-                    m_sb.AppendLine("Event timestamp " + eventData.TimeStamp + " tested ");
 
                     if (TestForTimestampAtIndex(eventData.TimeStamp, i)) {
-                        m_sb.Append("TRUE");
-                        m_sb.Append(" for relative position " + m_activeAchronConditionOrder[i].Item1.ToString() + " compared to value(s)" + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2]);
-                        switch (m_activeAchronConditionOrder[i].Item1) {
-                            case RelativeOrder.BEFORE:
-                                if (m_activeAchronConditionOrder[i].Item2 - 1 >= 0)
-                                    m_sb.Append(" and " + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2 - 1]);
-                                break;
-                            case RelativeOrder.AFTER:
-                                if (m_activeAchronConditionOrder[i].Item2 + 1 < m_successTimeStamps.Count)
-                                    m_sb.Append(" and " + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2 + 1]);
-                                break;
-                        }
-
                         m_activeAchronConditions.RemoveAt(i);
                         m_activeAchronConditionOrder.RemoveAt(i);
                         break;
-                    } else {
-                        m_sb.Append("FALSE");
-                        m_sb.Append(" for relative position " + m_activeAchronConditionOrder[i].Item1.ToString() + " compared to value(s)" + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2]);
-
-                        switch (m_activeAchronConditionOrder[i].Item1) {
-                            case RelativeOrder.BEFORE:
-                                if (m_activeAchronConditionOrder[i].Item2 - 1 >= 0)
-                                    m_sb.Append(" and " + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2 - 1]);
-                                break;
-                            case RelativeOrder.AFTER:
-                                if (m_activeAchronConditionOrder[i].Item2 + 1 < m_successTimeStamps.Count)
-                                    m_sb.Append(" and " + m_successTimeStamps[m_activeAchronConditionOrder[i].Item2 + 1]);
-                                break;
-                        }
                     }
                 }
             }
         } else {
-            m_sb.AppendLine("Main sequence has not finished. Iterating over active conditions.");
             // Add matching events to timestamp list for later evaluation
             for (int i = 0; i < m_activeAchronConditions.Count; i++) {
                 TrickCondition.ConditionState conditionState = m_activeAchronConditions[i].TestCondition(eventData);
-                m_sb.AppendLine("Condition [" + i + "] returned " + conditionState.ToString());
 
                 if (conditionState == TrickCondition.ConditionState.SUCCESS) {
-                    m_sb.AppendLine("Adding timestamp " + eventData.TimeStamp + " to list at index [" + i + "].");
                     m_activeAchronConditionTimeStamps[i].Add(eventData.TimeStamp);
                 }
             }
         }
 
         if (m_activeAchronConditions.Count == 0) {
-            m_sb.AppendLine("All conditions processed, exiting with <color=green>SUCCESS</color>.");
             return SequenceState.SUCCESS;
         } else {
-
-            m_sb.AppendLine("<color=blue>Continuing</color>");
             return SequenceState.RUNNING;
         }
     }
@@ -243,7 +199,7 @@ public class AchronologicalParser : LinearTrickParser
         return ParserType.ACHRONOLOGICAL;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     public override void OnInspectorGUIBody()
     {
         base.OnInspectorGUIBody();

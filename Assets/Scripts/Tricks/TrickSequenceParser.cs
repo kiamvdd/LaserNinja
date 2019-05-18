@@ -30,8 +30,6 @@ public abstract class TrickSequenceParser
     }
     #endregion
 
-    public abstract void ForcePrintDebugLog();
-
     protected ParserState m_state = ParserState.START;
     public ParserState State { get { return m_state; } }
     public int RepeatAmount;
@@ -39,9 +37,9 @@ public abstract class TrickSequenceParser
     public abstract TrickSequenceParser Instantiate();
     public abstract SequenceState ProcessTrickEvent(TrickEventData eventData);
     protected abstract void @Reset();
-    public abstract void OnValidate();
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
+    public abstract void OnValidate();
     public virtual void OnInspectorGUIBody()
     {
         EditorGUILayout.BeginHorizontal();

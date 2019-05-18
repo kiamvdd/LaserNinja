@@ -44,6 +44,9 @@ public class PlayerCharacter : Character
 
     private CameraController m_cameraController;
 
+    [SerializeField]
+    private AmmoUI m_ammoUI;
+
     [Header("Other")]
     [SerializeField]
     private Gun m_gun;
@@ -52,8 +55,27 @@ public class PlayerCharacter : Character
     protected override void Awake()
     {
         base.Awake();
+        m_gun.OnShotcountChanged += UpdateAmmoUI;
+        m_ammoUI.SetAmmoCount(3);
         m_cameraController = FindObjectOfType<CameraController>();
         m_physicsTimeStep = Time.fixedDeltaTime;
+    }
+
+    private void OnDestroy()
+    {
+        m_gun.OnShotcountChanged -= UpdateAmmoUI;
+    }
+
+    private void UpdateAmmoUI(int ammoChangeAmount)
+    {
+        if (ammoChangeAmount > 0 && Input.GetMouseButton(1))
+        {
+            m_gun.SetAimingGuideEnabled(true);
+            SetTimeScale(m_slowmoSpeed);
+        }
+
+        m_ammoUI.ModifyAmmoCountBy(ammoChangeAmount);
+        m_ammoUI.FlashIcons();
     }
 
     public enum PlayerMovementState
@@ -96,13 +118,13 @@ public class PlayerCharacter : Character
             m_gun.Fire(m_viewController.LookDirection);
         }
 
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1) && m_gun.ShotCount > 0) {
             SetTimeScale(m_slowmoSpeed);
             m_gun.SetAimingGuideEnabled(true);
         }
 
         if (Input.GetMouseButton(1))
-            m_gun.ShowAimingGuide(m_viewController.LookDirection);
+            m_gun.UpdateAimingDirection(m_viewController.LookDirection);
 
         if (Input.GetMouseButtonUp(1) || Input.GetMouseButtonDown(0)) {
             m_gun.SetAimingGuideEnabled(false);
@@ -215,7 +237,6 @@ public class PlayerCharacter : Character
             SwitchMovementState(PlayerMovementState.IDLE);
         } else if (!((m_playerBody.TouchingLeftWall && h < 0) || (m_playerBody.TouchingRightWall && h > 0))) {
             SwitchMovementState(PlayerMovementState.FALLING);
-            Debug.Log("Wall fall");
             EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.PLAYERFALL));
         }
     }

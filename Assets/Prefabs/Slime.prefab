@@ -5130,6 +5130,7 @@ GameObject:
   - component: {fileID: 5209520355115121053}
   - component: {fileID: 5209520355115121041}
   - component: {fileID: 5209520355115121055}
+  - component: {fileID: 2465725496054140832}
   m_Layer: 10
   m_Name: Slime
   m_TagString: Untagged
@@ -5205,7 +5206,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 6200000, guid: e95ab0d5adff4f24b8e341b86c51e6b0, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -5254,9 +5255,28 @@ MonoBehaviour:
   m_maxHealth: 1
   m_movementSpeed: 2.5
   m_viewController: {fileID: 0}
+  m_detectionRadius: 10
+  m_occlusionMask:
+    serializedVersion: 2
+    m_Bits: 4608
   m_characterBody: {fileID: 5209520355115121041}
   m_deathParticles: {fileID: 540920463}
   m_deathSound: {fileID: 964343407}
+--- !u!114 &2465725496054140832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5209520355115121040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569ffea5af1522b4f8cd0c523ab29a86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &8356295453988567825
 GameObject:
   m_ObjectHideFlags: 0

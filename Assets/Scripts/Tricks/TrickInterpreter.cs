@@ -20,20 +20,8 @@ public class TrickInterpreter : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.O)) {
-            Debug.Log("<color=red>START OF DEBUG LOG STREAM</color>");
-            foreach (Trick trick in m_tricks) {
-                trick.ForcePrintDebugLogs();
-            }
-            Debug.Log("<color=red>END OF DEBUG LOG STREAM</color>");
-        }
-    }
-
     private void OnTrickEvent(TrickEventData eventData)
     {
-        Debug.Log(eventData.Type.ToString()); 
         // receive jump
         foreach (Trick trick in m_tricks) {
             // pass jump to each trick
@@ -41,7 +29,7 @@ public class TrickInterpreter : MonoBehaviour
         }
     }
 
-    private void OnTrickCompleted(Trick trick)
+    public void OnTrickCompleted(Trick trick)
     {
         m_levelTimer.AddTimeFromTrick(trick);
     }

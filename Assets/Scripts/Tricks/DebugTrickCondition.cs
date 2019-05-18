@@ -11,7 +11,7 @@ public class DebugTrickCondition : TrickCondition
         return ReturnValue ? ConditionState.SUCCESS : ConditionState.FAIL;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     public override void OnInspectorGUI()
     {
         EditorGUILayout.BeginVertical();

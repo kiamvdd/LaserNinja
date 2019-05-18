@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6484584840102127194}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &167497877
 Light:
@@ -57,7 +57,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5101,7 +5101,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6484584840102127194}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &826764070273188789
 MonoBehaviour:
@@ -5276,6 +5276,52 @@ Transform:
   m_Father: {fileID: 4446993521618076720}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6083641580016089026
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5029992721714111815}
+  - component: {fileID: 7209280359563679594}
+  m_Layer: 8
+  m_Name: AmmoUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5029992721714111815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6083641580016089026}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6484584840102127194}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7209280359563679594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6083641580016089026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c381a7896994a2f41b5ca084dfe1513f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bulletIcon: {fileID: 1745218362636125266, guid: f054b7e8f22e5be4498b159af1905000,
+    type: 3}
+  m_spacing: 0.5
 --- !u!1 &6118185838230649608
 GameObject:
   m_ObjectHideFlags: 0
@@ -5311,7 +5357,7 @@ Transform:
   - {fileID: 3236032407226199363}
   - {fileID: 6107816097875020047}
   m_Father: {fileID: 6484584840102127194}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6484584839663002426
 GameObject:
@@ -5432,6 +5478,7 @@ MonoBehaviour:
   m_owner: {fileID: 6484584840102127194}
   m_barrel: {fileID: 1946569648}
   m_animator: {fileID: 202198267}
+  m_shotCount: 3
   m_aimingGuideLineRenderer: {fileID: 842558143}
 --- !u!1 &6484584840102127198
 GameObject:
@@ -5444,7 +5491,7 @@ GameObject:
   - component: {fileID: 6484584840102127194}
   - component: {fileID: 6484584840102127189}
   - component: {fileID: 6484584840102127192}
-  - component: {fileID: 6484584840102127193}
+  - component: {fileID: 4397681039812617170}
   - component: {fileID: 1248677417}
   m_Layer: 8
   m_Name: Player
@@ -5465,6 +5512,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8869680714885464368}
+  - {fileID: 5029992721714111815}
   - {fileID: 6484584840836697286}
   - {fileID: 4592183966807443425}
   - {fileID: 4446993521618076720}
@@ -5498,6 +5546,7 @@ MonoBehaviour:
   m_deathParticles: {fileID: 4364499348110900775}
   m_jumpParticles: {fileID: 1846512704}
   m_jumpSound: {fileID: 826764070273188789}
+  m_ammoUI: {fileID: 7209280359563679594}
   m_gun: {fileID: 202198266}
 --- !u!50 &6484584840102127192
 Rigidbody2D:
@@ -5520,8 +5569,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &6484584840102127193
-BoxCollider2D:
+--- !u!60 &4397681039812617170
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5533,19 +5582,26 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.043759823, y: -0.043759942}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.6, y: 1.6}
-    newSize: {x: 0.16, y: 0.16}
-    adaptiveTilingThreshold: 0.5
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.7084856, y: 1.51248}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.36220145, y: 0.49997902}
+      - {x: -0.39874506, y: 0.46422672}
+      - {x: -0.39873457, y: -0.75943756}
+      - {x: -0.36248112, y: -0.7998276}
+      - {x: 0.2649815, y: -0.79989004}
+      - {x: 0.30011964, y: -0.7636552}
+      - {x: 0.29951763, y: 0.46405602}
+      - {x: 0.26991916, y: 0.50012827}
 --- !u!114 &1248677417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5613,7 +5669,7 @@ Transform:
   - {fileID: 6484584841082970750}
   - {fileID: 1846512702}
   m_Father: {fileID: 6484584840102127194}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1058760632362744172
 MonoBehaviour:

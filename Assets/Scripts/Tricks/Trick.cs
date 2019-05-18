@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Newtonsoft.Json;
+using OdinSerializer;
 
 [CreateAssetMenu(menuName = "LightBounce/Trick")]
 [Serializable]
@@ -30,15 +30,13 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
     private TrickSequenceParser.ParserType m_parserType = TrickSequenceParser.ParserType.LINEAR;
 
     [SerializeField]
-    private TrickSequenceParser m_parserTemplate = new LinearTrickParser();
-    public TrickSequenceParser ParserTemplate { get { return m_parserTemplate; } }
+    private TrickSequenceParser m_odinParserTemplate = new LinearTrickParser();
+    public TrickSequenceParser ParserTemplate { get { return m_odinParserTemplate; } }
     private List<TrickSequenceParser> m_activeParsers = new List<TrickSequenceParser>();
 
+    [HideInInspector]
     [SerializeField]
-    private string m_parserJSON = "";
-
-    [SerializeField]
-    private string m_debugParserJSON = "";
+    private byte[] m_odinBytes;
 
     public delegate void TrickCallBack(Trick trick);
     public event TrickCallBack OnTrickCompleted;
@@ -49,7 +47,7 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
         // if no parsers or concurrency == unlimited, add new parser
         if (m_activeParsers.Count == 0 || m_concurrencyType == Concurrency.UNLIMITED) {
             // copy template values into new instance
-            TrickSequenceParser newParser = m_parserTemplate.Instantiate();
+            TrickSequenceParser newParser = m_odinParserTemplate.Instantiate();
             // add to active parser list
             m_activeParsers.Add(newParser);
         }
@@ -70,44 +68,36 @@ public class Trick : ScriptableObject, ISerializationCallbackReceiver
             }
 
             if (sequenceState == TrickSequenceParser.SequenceState.SUCCESS) {
-                Debug.Log("Trick completed on parser [" + (i + 1) + "] on event " + eventData.Type.ToString() + " with timestamp " + eventData.TimeStamp + ". " + m_activeParsers.Count + " parsers running concurrently.");
                 OnTrickCompleted(this);
             }
         }
     }
 
-    public void ForcePrintDebugLogs()
-    {
-        foreach (TrickSequenceParser parser in m_activeParsers) {
-            parser.ForcePrintDebugLog();
-        }
-    }
-
+#if UNITY_EDITOR && !FAKE_BUILD
     public void OnValidate()
     {
-        if (m_parserTemplate == null || m_parserTemplate.GetParserType() != m_parserType) {
+        if (m_odinParserTemplate == null || m_odinParserTemplate.GetParserType() != m_parserType) {
             switch (m_parserType) {
                 case TrickSequenceParser.ParserType.LINEAR:
-                    m_parserTemplate = new LinearTrickParser();
+                    m_odinParserTemplate = new LinearTrickParser();
                     break;
                 case TrickSequenceParser.ParserType.ACHRONOLOGICAL:
-                    m_parserTemplate = new AchronologicalParser();
+                    m_odinParserTemplate = new AchronologicalParser();
                     break;
             }
         }
 
-        m_parserTemplate.OnValidate();
+        m_odinParserTemplate.OnValidate();
     }
+#endif
 
     public void OnBeforeSerialize()
     {
-        JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-        m_parserJSON = JsonConvert.SerializeObject(m_parserTemplate, settings);
+        m_odinBytes = SerializationUtility.SerializeValue<TrickSequenceParser>(m_odinParserTemplate, DataFormat.Binary);
     }
 
     public void OnAfterDeserialize()
     {
-        JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-        m_parserTemplate = JsonConvert.DeserializeObject<TrickSequenceParser>(m_parserJSON, settings);
+        m_odinParserTemplate = SerializationUtility.DeserializeValue<TrickSequenceParser>(m_odinBytes, DataFormat.Binary);
     }
 }//

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEventData>
+public class TrickEventData
 {
     [Flags]
     public enum TrickEventType
@@ -29,39 +29,5 @@ public class TrickEventData : IComparable<TrickEventData>, IEquatable<TrickEvent
     {
         m_type = type;
         m_timeStamp = Time.realtimeSinceStartup;
-    }
-
-    public int CompareTo(TrickEventData other)
-    {
-        if (other.TimeStamp < m_timeStamp)
-            return 1;
-        else if (other.TimeStamp > m_timeStamp)
-            return -1;
-        else
-            return 0;
-    }
-
-    public bool Equals(TrickEventData other)
-    {
-        return (other.Type == m_type) && (other.TimeStamp == m_timeStamp);
-    }
-}
-
-public class TrickEventDataComparer : EqualityComparer<TrickEventData>
-{
-    public override bool Equals(TrickEventData x, TrickEventData y)
-    {
-        if (ReferenceEquals(x, y))
-            return true;
-
-        if (x is null || y is null)
-            return false;
-
-        return x.Equals(y);
-    }
-
-    public override int GetHashCode(TrickEventData obj)
-    {
-        return obj.TimeStamp.GetHashCode();
     }
 }

@@ -1404,7 +1404,7 @@ PrefabInstance:
     - target: {fileID: 3972900019047113250, guid: ac87828e2dc175443a7b6f117b22755b,
         type: 3}
       propertyPath: m_startTime
-      value: 200
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3972900019047113250, guid: ac87828e2dc175443a7b6f117b22755b,
         type: 3}
@@ -6184,6 +6184,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 569ffea5af1522b4f8cd0c523ab29a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1306867875
 Transform:
   m_ObjectHideFlags: 0
@@ -10755,6 +10758,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 569ffea5af1522b4f8cd0c523ab29a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1890797266
 Transform:
   m_ObjectHideFlags: 0
@@ -12892,6 +12898,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 569ffea5af1522b4f8cd0c523ab29a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &2130731348
 Transform:
   m_ObjectHideFlags: 0

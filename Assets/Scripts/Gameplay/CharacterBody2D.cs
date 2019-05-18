@@ -114,6 +114,7 @@ public class CharacterBody2D : MonoBehaviour
 
         if (MaxMoveVelocity.x != 0)
             velocity.x = Mathf.Clamp(velocity.x, -MaxMoveVelocity.x, MaxMoveVelocity.x);
+
         if (MaxMoveVelocity.y != 0)
             velocity.y = Mathf.Clamp(velocity.y, -MaxMoveVelocity.y, MaxMoveVelocity.y);
 
@@ -135,7 +136,7 @@ public class CharacterBody2D : MonoBehaviour
         IsGrounded = false;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     protected virtual void OnDrawGizmos()
     {
         if (m_groundTestOrigins != null)

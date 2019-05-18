@@ -52,7 +52,7 @@ public class LaserProjectile : Projectile
 
         MoveAlongTrajectory();
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
         m_trajectory.DrawDebugTrajectory();
 #endif
 

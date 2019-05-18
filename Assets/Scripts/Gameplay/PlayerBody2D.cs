@@ -42,7 +42,7 @@ public class PlayerBody2D : CharacterBody2D
         }
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();

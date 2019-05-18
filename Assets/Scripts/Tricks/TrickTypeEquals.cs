@@ -33,7 +33,7 @@ public class TrickTypeEquals : TrickCondition
 
         return ConditionState.RUNNING;
     }
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     private string blacklistLabel = "Event Blacklist";
     private string whitelistLabel = "Event Whitelist";
     public override void OnInspectorGUI()

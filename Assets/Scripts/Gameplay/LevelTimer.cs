@@ -37,6 +37,8 @@ public class LevelTimer : MonoBehaviour
 
     [SerializeField]
     private int m_nextSceneIndex = -1;
+
+    private float m_lowestTime = Mathf.Infinity;
     #endregion
 
     private void Awake()
@@ -50,6 +52,8 @@ public class LevelTimer : MonoBehaviour
     {
         if (m_levelEnd)
             return;
+
+        Debug.Log("Lowest time: " + m_lowestTime);
 
         if (win) {
             enabled = false;
@@ -79,7 +83,8 @@ public class LevelTimer : MonoBehaviour
                 m_timerActive = true;
                 m_anyKeyText.SetActive(false);
                 m_music.Play();
-                EventBus.OnTimerStart();
+
+                EventBus.OnTimerStart?.Invoke();
             }
 
             return;
@@ -94,6 +99,10 @@ public class LevelTimer : MonoBehaviour
         }
 
         m_timer -= Time.deltaTime;
+
+        if (m_timer < m_lowestTime)
+            m_lowestTime = m_timer;
+
         TimeSpan ts = TimeSpan.FromSeconds(m_timer);
 
         m_text.text = ts.ToString(@"mm\:ss\:ff");
