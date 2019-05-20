@@ -37,7 +37,7 @@ public class Gun : MonoBehaviour
 
     public void Fire(Vector3 direction)
     {
-        if (!m_aiming || m_shotCount == 0)
+        if (m_shotCount == 0)
             return;
 
         EventBus.OnTrickEvent(new TrickEventData(TrickEventData.TrickEventType.SHOOT));

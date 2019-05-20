@@ -47,6 +47,13 @@ public class PlayerCharacter : Character
     [SerializeField]
     private AmmoUI m_ammoUI;
 
+    [SerializeField]
+    private float m_maxSlowmoTime = 4;
+    private float m_slowmoTime;
+    private bool m_slowmoEnabled = false;
+    [SerializeField]
+    private GuideUI m_guideUI;
+
     [Header("Other")]
     [SerializeField]
     private Gun m_gun;
@@ -59,11 +66,25 @@ public class PlayerCharacter : Character
         m_ammoUI.SetAmmoCount(3);
         m_cameraController = FindObjectOfType<CameraController>();
         m_physicsTimeStep = Time.fixedDeltaTime;
+        m_slowmoTime = m_maxSlowmoTime;
+        m_guideUI.MaxValue = m_maxSlowmoTime;
+        EventBus.OnTrickEvent += OnTrickEvent;
+    }
+
+    private void OnTrickEvent(TrickEventData eventData)
+    {
+        if (eventData.Type == TrickEventData.TrickEventType.KILL)
+        {
+            m_slowmoTime = m_maxSlowmoTime;
+            m_guideUI.Value = m_slowmoTime;
+            m_guideUI.Hide();
+        }
     }
 
     private void OnDestroy()
     {
         m_gun.OnShotcountChanged -= UpdateAmmoUI;
+        EventBus.OnTrickEvent -= OnTrickEvent;
     }
 
     private void UpdateAmmoUI(int ammoChangeAmount)
@@ -71,7 +92,7 @@ public class PlayerCharacter : Character
         if (ammoChangeAmount > 0 && Input.GetMouseButton(1))
         {
             m_gun.SetAimingGuideEnabled(true);
-            SetTimeScale(m_slowmoSpeed);
+            StartSlowmo();
         }
 
         m_ammoUI.ModifyAmmoCountBy(ammoChangeAmount);
@@ -112,14 +133,13 @@ public class PlayerCharacter : Character
 
         m_cameraController.Tick();
 
-        // Aiming / gun logic
         LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         if (Input.GetMouseButtonDown(0)) {
             m_gun.Fire(m_viewController.LookDirection);
         }
 
         if (Input.GetMouseButtonDown(1) && m_gun.ShotCount > 0) {
-            SetTimeScale(m_slowmoSpeed);
+            StartSlowmo();
             m_gun.SetAimingGuideEnabled(true);
         }
 
@@ -128,8 +148,46 @@ public class PlayerCharacter : Character
 
         if (Input.GetMouseButtonUp(1) || Input.GetMouseButtonDown(0)) {
             m_gun.SetAimingGuideEnabled(false);
-            SetTimeScale(1);
+            StopSlowmo();
         }
+
+        if (m_slowmoEnabled)
+        {
+            m_slowmoTime -= Time.unscaledDeltaTime;
+
+            if (m_slowmoTime <= 0)
+            {
+                m_slowmoTime = 0;
+                StopSlowmo();
+            }
+
+            m_guideUI.Value = m_slowmoTime;
+        }
+        else if (m_slowmoTime < m_maxSlowmoTime)
+        {
+            m_slowmoTime += Time.unscaledDeltaTime;
+
+            if (m_slowmoTime > m_maxSlowmoTime)
+            {
+                m_slowmoTime = m_maxSlowmoTime;
+                m_guideUI.Hide();
+            }
+
+            m_guideUI.Value = m_slowmoTime;
+        }
+    }
+
+    private void StartSlowmo()
+    {
+        SetTimeScale(m_slowmoSpeed);
+        m_slowmoEnabled = true;
+        m_guideUI.Show();
+    }
+
+    private void StopSlowmo()
+    {
+        SetTimeScale(1);
+        m_slowmoEnabled = false;
     }
 
     private void ExecuteIdleState()
