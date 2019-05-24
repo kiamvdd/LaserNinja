@@ -9,9 +9,17 @@ public class AmmoUI : MonoBehaviour
     [SerializeField]
     private float m_spacing = 0.1f;
     private Stack<SpriteRenderer> m_bulletIcons = new Stack<SpriteRenderer>();
+    [SerializeField]
     private float m_flashTime = 1;
+    [SerializeField]
     private float m_fadeoutTime = 1;
     private IEnumerator m_flashAnimation = null;
+    private float m_xOffset;
+
+    private void Awake()
+    {
+        m_xOffset = transform.localPosition.x;
+    }
 
     public void SetAmmoCount(int amount)
     {
@@ -46,7 +54,7 @@ public class AmmoUI : MonoBehaviour
                 break;
 
             SpriteRenderer icon = m_bulletIcons.Pop();
-            Destroy(icon);
+            Destroy(icon.gameObject);
         }
     }
 
@@ -104,7 +112,7 @@ public class AmmoUI : MonoBehaviour
     private void UpdatePosition()
     {
         Vector3 pos = transform.localPosition;
-        pos.x = -( m_bulletIcons.Count * m_spacing ) * 0.5f + m_spacing * 0.5f;
+        pos.x = m_xOffset - (m_bulletIcons.Count - 1) * m_spacing * 0.5f;
         transform.localPosition = pos;
     }
 }

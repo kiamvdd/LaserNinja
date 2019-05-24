@@ -40,6 +40,9 @@ public class PlayerCharacter : Character
     private ParticleSystem m_jumpParticles;
 
     [SerializeField]
+    private SoundClip m_deathSound;
+
+    [SerializeField]
     private SoundClip m_jumpSound;
 
     private CameraController m_cameraController;
@@ -372,6 +375,8 @@ public class PlayerCharacter : Character
     {
         m_deathParticles.transform.parent = null;
         m_deathParticles.Play();
+
+        m_deathSound.Play(); 
 
         LevelTimer levelTimer = FindObjectOfType<LevelTimer>();
         levelTimer.EndLevel(false);
