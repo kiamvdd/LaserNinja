@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelTimer : MonoBehaviour
 {
+    #region Members
     [SerializeField]
     private float m_startTime = 10;
 
@@ -25,9 +26,6 @@ public class LevelTimer : MonoBehaviour
     [SerializeField]
     private PlayerCharacter m_player;
 
-    [SerializeField]
-    private SoundClip m_music;
-
     private float m_timer = 0;
 
     private bool m_levelEnd = false;
@@ -35,7 +33,10 @@ public class LevelTimer : MonoBehaviour
     private bool m_timerActive = false;
 
     [SerializeField]
-    private int m_nextSceneIndex = -1;
+    private LevelOrder m_levelOrder;
+
+    private float m_lowestTime = Mathf.Infinity;
+    #endregion
 
     private void Awake()
     {
@@ -49,14 +50,21 @@ public class LevelTimer : MonoBehaviour
         if (m_levelEnd)
             return;
 
-        if (win) {
+        if (win)
+        {
+            SaveLevelData();
+
             enabled = false;
             m_winText.SetActive(true);
             m_levelEnd = true;
 
-            if (m_nextSceneIndex != -1)
-                StartCoroutine(LoadSceneAfterSeconds(m_nextSceneIndex, 2));
-        } else {
+            string nextLevelName = m_levelOrder.GetNextLevelName();
+
+            if (nextLevelName != null)
+                StartCoroutine(LoadSceneAfterSeconds(nextLevelName, 2));
+        }
+        else
+        {
             m_timer = 0;
             m_text.enabled = false;
             m_gameOverText.SetActive(true);
@@ -64,25 +72,51 @@ public class LevelTimer : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadSceneAfterSeconds(int buildIndex, float seconds)
+    private void SaveLevelData()
+    {
+        LevelData data = SerializationIOHandler.Load<LevelData>("Leveldata.bin");
+
+        int levelId = m_levelOrder.GetCurrentLevelIndex();
+        if (levelId < 0)
+            return;
+
+        if (levelId + 1 > data.CurrentLevel)
+            data.CurrentLevel = levelId + 1;
+
+        if (m_timer > data.LevelTimes[levelId])
+            data.LevelTimes[levelId] = m_timer;
+
+        SerializationIOHandler.Save<LevelData>("Leveldata.bin", data);
+    }
+
+    private IEnumerator LoadSceneAfterSeconds(string sceneName, float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        SceneManager.LoadScene(buildIndex);
+        SceneManager.LoadScene(sceneName);
     }
 
     private void Update()
     {
-        if (!m_timerActive) {
-            if (Input.anyKeyDown) {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (!m_timerActive)
+        {
+            if (Input.anyKeyDown)
+            {
                 m_timerActive = true;
                 m_anyKeyText.SetActive(false);
-                m_music.Play();
+
+                EventBus.OnTimerStart?.Invoke();
             }
 
             return;
         }
 
-        if (m_levelEnd) {
+        if (m_levelEnd)
+        {
             m_timer += Time.deltaTime;
 
             if (m_timer > 2)
@@ -91,11 +125,15 @@ public class LevelTimer : MonoBehaviour
         }
 
         m_timer -= Time.deltaTime;
-        TimeSpan ts = TimeSpan.FromSeconds(m_timer);
 
+        if (m_timer < m_lowestTime)
+            m_lowestTime = m_timer;
+
+        TimeSpan ts = TimeSpan.FromSeconds(m_timer);
         m_text.text = ts.ToString(@"mm\:ss\:ff");
 
-        if (m_timer <= 0 && !m_levelEnd) {
+        if (m_timer <= 0 && !m_levelEnd)
+        {
             m_player.Destroy();
         }
     }
@@ -117,7 +155,8 @@ public class LevelTimer : MonoBehaviour
         float startScale = 1.2f;
         float timer = 0;
 
-        while (timer < 1) {
+        while (timer < 1)
+        {
             timer += Time.deltaTime;
             float currentScale = Mathf.Lerp(startScale, 1, timer);
             m_text.gameObject.transform.localScale = new Vector3(currentScale, currentScale, currentScale);

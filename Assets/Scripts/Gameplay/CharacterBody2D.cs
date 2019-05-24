@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 
 public class CharacterBody2D : MonoBehaviour
 {
     [SerializeField]
     private float m_floorRayCastDistance = 1f;
 
-    private int m_groundLayerID;
+    [SerializeField]
+    protected LayerMask m_floorMask;
 
     public bool IsGrounded { get; private set; }
     public bool IsKinematic { get { return m_body.isKinematic; } set { m_body.isKinematic = value; } }
@@ -44,15 +46,10 @@ public class CharacterBody2D : MonoBehaviour
     private Vector2 m_lastAcceleration = Vector2.zero;
 
     [SerializeField]
-    private Rigidbody2D m_body;
+    protected Rigidbody2D m_body;
 
     [SerializeField]
     private Transform[] m_groundTestOrigins;
-
-    private void Awake()
-    {
-        m_groundLayerID = LayerMask.NameToLayer("Floor");
-    }
 
     public void Move(Vector2 direction)
     {
@@ -64,32 +61,37 @@ public class CharacterBody2D : MonoBehaviour
         if ((m_lastAcceleration.y > 0 && m_body.velocity.y < 0) || (m_lastAcceleration.y < 0 && m_body.velocity.y > 0))
             changeMultiplier.y = 1;
 
+
         m_lastAcceleration = direction * (IsGrounded ? GroundAcceleration : AirAcceleration) + direction * changeMultiplier * (IsGrounded ? GroundDirectionChangeDeceleration : AirDirectionChangeDeceleration);
-        m_body.AddForce(m_lastAcceleration);
-
-
-        ClampVelocity();
     }
 
-    private void Update()
+    protected virtual void FixedUpdate()
+    {
+        m_body.AddForce(m_lastAcceleration);
+        ClampVelocity();
+        Decelerate();
+        TestForGround();
+    }
+
+    private void Decelerate()
     {
         Vector3 velocity = m_body.velocity;
 
         if (IsGrounded) {
             if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
-                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, GroundAutoDeceleration.x * Time.deltaTime);
-            }
-
-            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) { 
-                velocity.y = Mathf.MoveTowards(velocity.y, 0, GroundAutoDeceleration.y * Time.deltaTime);
-            }
-        } else {
-            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
-                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, AirAutoDeceleration.x * Time.deltaTime);
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, GroundAutoDeceleration.x * Time.fixedDeltaTime);
             }
 
             if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
-                velocity.y = Mathf.MoveTowards(velocity.y, 0, AirAutoDeceleration.y * Time.deltaTime);
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, GroundAutoDeceleration.y * Time.fixedDeltaTime);
+            }
+        } else {
+            if (Mathf.Abs(m_lastAcceleration.x) <= float.Epsilon) {
+                velocity.x = Mathf.MoveTowards(m_body.velocity.x, 0, AirAutoDeceleration.x * Time.fixedDeltaTime);
+            }
+
+            if (Mathf.Abs(m_lastAcceleration.y) <= float.Epsilon) {
+                velocity.y = Mathf.MoveTowards(velocity.y, 0, AirAutoDeceleration.y * Time.fixedDeltaTime);
             }
         }
 
@@ -106,18 +108,13 @@ public class CharacterBody2D : MonoBehaviour
         m_body.velocity = velocity;
     }
 
-    protected virtual void FixedUpdate()
-    {
-        ClampVelocity();
-        TestForGround();
-    }
-
     private void ClampVelocity()
     {
         Vector3 velocity = m_body.velocity;
 
         if (MaxMoveVelocity.x != 0)
             velocity.x = Mathf.Clamp(velocity.x, -MaxMoveVelocity.x, MaxMoveVelocity.x);
+
         if (MaxMoveVelocity.y != 0)
             velocity.y = Mathf.Clamp(velocity.y, -MaxMoveVelocity.y, MaxMoveVelocity.y);
 
@@ -127,23 +124,25 @@ public class CharacterBody2D : MonoBehaviour
     private void TestForGround()
     {
         foreach (Transform t in m_groundTestOrigins) {
-            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, (1 << m_groundLayerID));
+            RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, m_floorMask);
             if (hit.collider != null) {
+                transform.SetParent(hit.collider.transform);
                 IsGrounded = true;
                 return;
             }
         }
 
+        transform.SetParent(null);
         IsGrounded = false;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     protected virtual void OnDrawGizmos()
     {
         if (m_groundTestOrigins != null)
 
             foreach (Transform t in m_groundTestOrigins) {
-                RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, (1 << m_groundLayerID));
+                RaycastHit2D hit = Physics2D.Raycast(t.position, Vector2.down, m_floorRayCastDistance, m_floorMask);
                 Debug.DrawRay(t.position, Vector2.down * m_floorRayCastDistance);
             }
     }

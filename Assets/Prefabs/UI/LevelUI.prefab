@@ -133,7 +133,7 @@ MonoBehaviour:
   m_trickList: {fileID: 7963479100333303752}
   m_player: {fileID: 0}
   m_music: {fileID: 0}
-  m_nextSceneIndex: -1
+  m_levelOrder: {fileID: 11400000, guid: 360e93d4cb12c8145bde1ab9826c5db8, type: 2}
 --- !u!222 &3972900019047113261
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -240,11 +240,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -270,9 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18a2484bacfd9d844ba3f3eecc17bff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_trickList:
-  - {fileID: 11400000, guid: 4ae1a60ef8d4a2049a3a43206f5868e6, type: 2}
-  - {fileID: 11400000, guid: 70884a7775d69694d8e4e1c6725e6fef, type: 2}
+  m_tricks:
+  - {fileID: 11400000, guid: be49c72c589ccc1429e1b05d2cf187d2, type: 2}
+  - {fileID: 11400000, guid: 61ce21cdaef07984bb4e540aaf51a90f, type: 2}
+  - {fileID: 11400000, guid: 2bda23f8dac88ea45b2e541a62d3d59f, type: 2}
+  - {fileID: 11400000, guid: ec110a18f7ecb0748b6c7816819c5732, type: 2}
   m_levelTimer: {fileID: 3972900019047113250}
 --- !u!1 &3972900019070527791
 GameObject:
@@ -419,11 +421,11 @@ MonoBehaviour:
     lineCount: 2
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -612,6 +614,7 @@ GameObject:
   - component: {fileID: 3972900020217788070}
   - component: {fileID: 3972900020217788065}
   - component: {fileID: 3972900020217788064}
+  - component: {fileID: 5108377855889012230}
   m_Layer: 5
   m_Name: LevelUI
   m_TagString: Untagged
@@ -703,6 +706,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5108377855889012230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3972900020217788067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd0d599127e70da4ca14927a7e5868f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3972900020501995687
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,7 +796,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -848,7 +863,7 @@ MonoBehaviour:
     lineCount: 2
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}

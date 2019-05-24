@@ -9,6 +9,12 @@ public class SlimeController : Character
     private LevelTimer m_levelTimer;
 
     [SerializeField]
+    private float m_detectionRadius = 10f;
+
+    [SerializeField]
+    private LayerMask m_occlusionMask;
+
+    [SerializeField]
     protected CharacterBody2D m_characterBody;
 
     [SerializeField]
@@ -35,10 +41,10 @@ public class SlimeController : Character
             return;
 
         Vector3 targetDirection = m_target.position - transform.position;
-        int layerMask = ~((1 << m_target.gameObject.layer) | (1 << gameObject.layer));
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, targetDirection.normalized, targetDirection.magnitude, layerMask);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, targetDirection.normalized, targetDirection.magnitude, m_occlusionMask);
 
-        if (hit.collider != null)
+        Debug.DrawRay(transform.position, targetDirection, ( hit.collider != null ? Color.red : ( Vector2.Distance(transform.position, m_target.position) > m_detectionRadius ? Color.magenta : Color.green ) ));
+        if (Vector2.Distance(transform.position, m_target.position) > m_detectionRadius || hit.collider != null)
             return;
 
         float h = Mathf.Clamp(m_target.position.x - transform.position.x, -1, 1) * m_movementSpeed;
@@ -64,13 +70,5 @@ public class SlimeController : Character
 
         if (m_viewController != null)
             m_viewController.Move(direction);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Player")) {
-            IDamageable damageable = collision.collider.GetComponent<IDamageable>();
-            damageable.Destroy();
-        }
     }
 }

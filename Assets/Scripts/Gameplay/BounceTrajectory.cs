@@ -192,7 +192,7 @@ public class BounceTrajectory : Trajectory
         OnBounce = null;
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     public override void DrawDebugTrajectory()
     {
         for (int i = 0; i < m_trajectoryPositions.Count - 1; i++) {

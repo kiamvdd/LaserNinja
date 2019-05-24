@@ -19,7 +19,7 @@ public abstract class Trajectory
     public abstract float GetDistanceFromProgress(float progress);
     public abstract float GetProgressFromDistance(float distance);
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     public abstract void DrawDebugTrajectory();
 #endif
 }

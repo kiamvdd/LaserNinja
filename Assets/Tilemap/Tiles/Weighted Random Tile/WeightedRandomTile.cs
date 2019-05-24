@@ -1,6 +1,6 @@
 using System;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
 using UnityEditor;
 #endif
 
@@ -45,7 +45,7 @@ namespace UnityEngine.Tilemaps {
         }
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !FAKE_BUILD
     [CustomEditor(typeof(WeightedRandomTile))]
     public class WeightedRandomTileEditor : Editor {
         private WeightedRandomTile Tile {

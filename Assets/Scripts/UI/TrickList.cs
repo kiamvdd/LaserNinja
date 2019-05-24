@@ -17,8 +17,8 @@ public class TrickList : MonoBehaviour
     private void AddTrickText(string trickname, float time)
     {
         TrickText text;
-        text = Instantiate(m_textPrefab);
-        text.transform.SetParent(transform);
+        text = Instantiate(m_textPrefab, transform);
+        text.transform.localScale = Vector3.one;
         TimeSpan ts = TimeSpan.FromSeconds(time);
         ts.ToString(@"ss\:ff");
         text.Init(trickname + " +" + ts.ToString(@"ss\:ff"));

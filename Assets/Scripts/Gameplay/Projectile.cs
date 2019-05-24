@@ -48,6 +48,9 @@ public abstract class Projectile : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (OnDestroyed == null)
+            return;
+
         OnDestroyed(this);
         OnDestroyed = null;
     }
